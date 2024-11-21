@@ -1,0 +1,2 @@
+# Parkeringsapp shared
+Det här är ett projekt för att tillhandahålla models och interfacet för repos. Här finns även några gemensamma variabler i helpers. Detta projekt är refererat av både klient och server i Parkeringsappen.
