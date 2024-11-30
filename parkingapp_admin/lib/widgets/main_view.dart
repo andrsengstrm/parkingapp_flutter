@@ -14,8 +14,8 @@ class _MainViewState extends State<MainView> {
   
   get destinations => const <NavigationRailDestination>[
     NavigationRailDestination(icon: Icon(Icons.dashboard), label: Text('Dashboard')),
-    NavigationRailDestination(icon: Icon(Icons.list), label: Text('Parkings')),
-    NavigationRailDestination(icon: Icon(Icons.list), label: Text('Parking spaces'))
+    NavigationRailDestination(icon: Icon(Icons.list), label: Text('Parkingar')),
+    NavigationRailDestination(icon: Icon(Icons.list), label: Text('Parkingsplatser'))
   ];
 
   int _selectedIndex = 0;
@@ -39,11 +39,11 @@ class _MainViewState extends State<MainView> {
                 _selectedIndex = index;
               });
             },
+            extended: true,
           ),
           const VerticalDivider(thickness: 1, width: 1),
-          Container(
-            child: views[_selectedIndex],
-            alignment: Alignment.topLeft,
+          Expanded(
+            child: views[_selectedIndex]
           )
         ],
       )
