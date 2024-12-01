@@ -14,8 +14,8 @@ class _MainViewState extends State<MainView> {
   
   get destinations => const <NavigationRailDestination>[
     NavigationRailDestination(icon: Icon(Icons.dashboard), label: Text('Dashboard')),
-    NavigationRailDestination(icon: Icon(Icons.list), label: Text('Parkingar')),
-    NavigationRailDestination(icon: Icon(Icons.list), label: Text('Parkingsplatser'))
+    NavigationRailDestination(icon: Icon(Icons.list), label: Text('Parkeringar')),
+    NavigationRailDestination(icon: Icon(Icons.list), label: Text('Parkeringsplatser'))
   ];
 
   int _selectedIndex = 0;

@@ -20,7 +20,7 @@ class _ParkingsViewState extends State<ParkingsView> {
     return parkingsList!;
   }
 
-  Parking? selectedParking;
+  Parking? selectedItem;
 
   @override
   void initState() {
@@ -33,116 +33,118 @@ class _ParkingsViewState extends State<ParkingsView> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Container(
-          alignment: Alignment.topLeft,
-          width: 800,
-          height: 800,
-          padding: const EdgeInsets.all(16),
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text("Aktiva parkeringar", style: TextStyle(fontWeight: FontWeight.bold)),
-              FutureBuilder<List<Parking>?>(
-                future: parkingsList,
-                builder: (context, snapshot) {
-                  if(snapshot.hasData) {
-                    return Column(
-                      children: [
-                        const Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 100,
-                              child: Text("Id", style: TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                            SizedBox(
-                              width: 200, 
-                              child: Text("Registreringsnummer", style: TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                            SizedBox(
-                              width: 200, 
-                              child: Text("Adress", style: TextStyle(fontWeight: FontWeight.bold)),
-                            ),
-                            SizedBox(
-                              width: 200, 
-                              child: Text("Starttid", style: TextStyle(fontWeight: FontWeight.bold)),
-                            )
-                          ]
-                        ),
-                        ListView.separated(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return GestureDetector(
-                              
-                              onTap: () {
-                                setState((){
-                                  selectedParking = snapshot.data![index];
-                                });
-                                //String? regId = selectedParking!.vehicle!.regId;
-                                //var snackBar = SnackBar(content: Text("Parkeringen för $regId är vald"));
-                                //ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                              },
-                              child: MouseRegion(
-                                cursor: SystemMouseCursors.click,
-                                child: Container(
-                                  padding: const EdgeInsets.all(4),
-                                  color: selectedParking == snapshot.data![index] ? Colors.green[100] : Colors.white,
-                                  child: Row (
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 100,
-                                        child:  Text(snapshot.data![index].id.toString()),
-                                      ),
-                                      SizedBox(
-                                        width: 200,
-                                        child: Text(snapshot.data![index].vehicle!.regId),
-                                      ),
-                                      SizedBox(
-                                        width: 200,
-                                        child: Text(snapshot.data![index].parkingSpace!.address),
-                                      ),
-                                      SizedBox(
-                                        width: 200,
-                                        child: Text(snapshot.data![index].startTime),
-                                      )
-                                    ],
-                                  ),
-                                ),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              selectedItem = null;
+            });
+          },
+          child: Container(
+            alignment: Alignment.topLeft,
+            width: 800,
+            height: 800,
+            padding: const EdgeInsets.all(16),
+            color: Colors.white,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text("Aktiva parkeringar", style: TextStyle(fontWeight: FontWeight.bold)),
+                FutureBuilder<List<Parking>?>(
+                  future: parkingsList,
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData) {
+                      return Column(
+                        children: [
+                          const Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 100,
+                                child: Text("Id", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 200, 
+                                child: Text("Registreringsnummer", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 200, 
+                                child: Text("Adress", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 200, 
+                                child: Text("Starttid", style: TextStyle(fontWeight: FontWeight.bold)),
                               )
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) => const Divider(),
-                        )
-                        
-                      ]
-                    );
-                  } else if(snapshot.hasError) {
-                    return Text("Error!");
+                            ]
+                          ),
+                          ListView.separated(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState((){
+                                    selectedItem = snapshot.data![index];
+                                  });
+                                  //String? regId = selectedParking!.vehicle!.regId;
+                                  //var snackBar = SnackBar(content: Text("Parkeringen för $regId är vald"));
+                                  //ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                },
+                                child: MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    color: selectedItem == snapshot.data![index] ? Colors.blueGrey[50] : Colors.white,
+                                    child: Row (
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 100,
+                                          child:  Text(snapshot.data![index].id.toString()),
+                                        ),
+                                        SizedBox(
+                                          width: 200,
+                                          child: Text(snapshot.data![index].vehicle!.regId),
+                                        ),
+                                        SizedBox(
+                                          width: 200,
+                                          child: Text(snapshot.data![index].parkingSpace!.address),
+                                        ),
+                                        SizedBox(
+                                          width: 200,
+                                          child: Text(snapshot.data![index].startTime),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              );
+                            },
+                            separatorBuilder: (BuildContext context, int index) => const Divider(),
+                          )
+                          
+                        ]
+                      );
+                    } else if(snapshot.hasError) {
+                      return Text("Error!");
+                    }
+                    return const CircularProgressIndicator();
                   }
-                  return const CircularProgressIndicator();
-                }
-              )
-            ],
-          )
+                )
+              ],
+            )
+          ),
         ),
         Positioned(
           bottom: 16,
-          right: 16,
-          child: selectedParking != null ?
+          left: 16,
+          child: selectedItem != null ?
             Row (
               children: [
-                TextButton (
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(Colors.green[100]),
-                    padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(24)),
-                  ),
+                ElevatedButton (
                   onPressed: () {
-                    if(selectedParking != null) {
-                      showAlertDialog(context, selectedParking!);
+                    if(selectedItem != null) {
+                      showAlertDialog(context, selectedItem!);
                     }
                   },
                   child: const Text("Visa detaljer")
