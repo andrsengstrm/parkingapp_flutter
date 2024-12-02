@@ -47,7 +47,7 @@ class _ParkingsViewState extends State<ParkingsView> {
             color: Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: [ 
                 const Text("Aktiva parkeringar", style: TextStyle(fontWeight: FontWeight.bold)),
                 FutureBuilder<List<Parking>?>(
                   future: parkingsList,
@@ -126,9 +126,17 @@ class _ParkingsViewState extends State<ParkingsView> {
                         ]
                       );
                     } else if(snapshot.hasError) {
-                      return Text("Error!");
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 8, bottom: 8),
+                        child: Text("Det gick inte att hämta data!"),
+                      );
                     }
-                    return const CircularProgressIndicator();
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 16, right: 16, bottom: 16),
+                      child: LinearProgressIndicator(
+                        minHeight: 1,
+                      )
+                    );
                   }
                 )
               ],

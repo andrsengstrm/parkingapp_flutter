@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:parkingapp_admin/repositories/parking_space_repository.dart';
 import 'package:shared/models/parking_space.dart';
@@ -13,13 +11,30 @@ class ParkingSpacesView extends StatefulWidget {
 
 class _ParkingSpacesViewState extends State<ParkingSpacesView> {
   
-  late Future<List<ParkingSpace>> itemList;
+  late Future<List<ParkingSpace>?> itemList;
+  bool dataLoaded = false;
 
-  Future<List<ParkingSpace>> getParkingSpaceList() async {
-    return (await ParkingSpaceRepository().getAll())!;
+  Future<List<ParkingSpace>?> getParkingSpaceList() async {
+    List<ParkingSpace>? items;
+    try{
+      items = await ParkingSpaceRepository().getAll();
+      setState(() {
+        dataLoaded = true;
+      });
+      debugPrint("Data was loaded!");
+    } catch(err) {
+      debugPrint("Error! $err");
+      setState(() {
+        dataLoaded = false;
+      });
+      throw Exception();
+    }
+    return items;
   }
 
   ParkingSpace? selectedItem;
+
+  
 
   @override
   void initState() {
@@ -68,7 +83,7 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
                               ),
                               SizedBox(
                                 width: 200, 
-                                child: Text("Kostnad", style: TextStyle(fontWeight: FontWeight.bold)),
+                                child: Text("Kostnad/timme", style: TextStyle(fontWeight: FontWeight.bold)),
                               )
                             ]
                           ),
@@ -117,9 +132,17 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
                         ]
                       );
                     } else if(snapshot.hasError) {
-                      return Text("Error!");
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 8, bottom: 8),
+                        child: Text("Det gick inte att hämta data!"),
+                      );
                     }
-                    return Center(child: const CircularProgressIndicator());
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 16, right: 16, bottom: 16),
+                      child: LinearProgressIndicator(
+                        minHeight: 1,
+                      )
+                    );
                   }
                 )
               ],
@@ -132,24 +155,25 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
           child: 
             Row (
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(right:8.0),
-                  child: ElevatedButton (
-                      onPressed: () async {
-                        var item = await showItemForm(context, null);
-                        if(item?.id == -1) {
-                          await ParkingSpaceRepository().add(item!);  
-                          setState(() {
-                            itemList = getParkingSpaceList();
-                          }); 
-                        }
-                        
-                      },
-                      child: const Text("Lägg till ny parkeringsplats")
-                    ),
-                ),
-                  selectedItem != null ? 
-                  
+                dataLoaded ? 
+                  Padding(
+                    padding: const EdgeInsets.only(right:8.0),
+                    child: ElevatedButton (
+                        onPressed: () async {
+                          var item = await showItemForm(context, null);
+                          if(item?.id == -1) {
+                            await ParkingSpaceRepository().add(item!);  
+                            setState(() {
+                              itemList = getParkingSpaceList();
+                            }); 
+                          }
+                          
+                        },
+                        child: const Text("Lägg till ny parkeringsplats")
+                      ),
+                  )
+                : SizedBox.shrink(),
+                selectedItem != null ?   
                   Row(
                     children: [
                       Padding(
@@ -187,8 +211,7 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
                       )
                     ],
                   )
-                  :
-                  SizedBox.shrink()
+                : SizedBox.shrink()
               ]
             ) 
 
