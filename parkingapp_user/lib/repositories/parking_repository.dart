@@ -8,7 +8,7 @@ import 'package:shared/repositories/repository_interface.dart';
 class ParkingRepository implements RepositoryInterface<Parking> {
 
   var client = http.Client();
-  final baseUrl = Helpers().baseUrl;
+  final baseUrl = "http://10.0.2.2:8080";  //Helpers().baseUrl;
   final path = "/parking";
 
   @override
@@ -19,7 +19,7 @@ class ParkingRepository implements RepositoryInterface<Parking> {
     try {
 
       final body = item.toJson();
-      
+
       response = await client.post(
         Uri.parse("$baseUrl$path"),
         headers: {"Content-Type": "application/json"},
@@ -51,7 +51,9 @@ class ParkingRepository implements RepositoryInterface<Parking> {
   Future<List<Parking>?> getAll() async {
 
     dynamic response;
-    
+
+    debugPrint(baseUrl);
+
     try {
 
       response = await client.get(

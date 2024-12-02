@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:parkingapp_admin/repositories/parking_space_repository.dart';
+import 'package:parkingapp_user/repositories/parking_space_repository.dart';
 import 'package:shared/models/parking_space.dart';
 
 class ParkingSpacesView extends StatefulWidget {

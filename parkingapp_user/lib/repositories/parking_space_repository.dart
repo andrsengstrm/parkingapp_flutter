@@ -1,25 +1,23 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared/helpers/helpers.dart';
-import 'package:shared/models/parking.dart';
+import 'package:shared/models/parking_space.dart';
 import 'package:shared/repositories/repository_interface.dart';
 
-class ParkingRepository implements RepositoryInterface<Parking> {
-
+class ParkingSpaceRepository implements RepositoryInterface<ParkingSpace> {
+  
   var client = http.Client();
-  final baseUrl = Helpers().baseUrl;
-  final path = "/parking";
-
+  final baseUrl = "http://10.0.2.2:8080";  //Helpers().baseUrl;Helpers().baseUrl;
+  final path = "/parkingspace";
+  
   @override
-  Future<Parking?> add(Parking item) async {
-
+  Future<ParkingSpace?> add(ParkingSpace item) async {
+    
+    final body = item.toJson();
     dynamic response;
 
     try {
 
-      final body = item.toJson();
-      
       response = await client.post(
         Uri.parse("$baseUrl$path"),
         headers: {"Content-Type": "application/json"},
@@ -35,27 +33,27 @@ class ParkingRepository implements RepositoryInterface<Parking> {
     if(response.statusCode == 200) {
     
       final bodyAsJson = jsonDecode(response.body);
-      Parking parking = Parking.fromJson(bodyAsJson);
-      return parking;
+      ParkingSpace parkingSpace = ParkingSpace.fromJson(bodyAsJson);
+      return parkingSpace;
     
     } else {
     
-      throw Exception("Det gick inte att lägga till parkeringen");
+      throw Exception("Det gick inte att lägga till parkeringplatsen");
     
     }
 
-
   }
 
-  @override
-  Future<List<Parking>?> getAll() async {
 
-    dynamic response;
+  @override
+  Future<List<ParkingSpace>?> getAll() async {
     
+    dynamic response;
+
     try {
 
       response = await client.get(
-        Uri.parse("$baseUrl$path")
+        Uri.parse('$baseUrl$path')
       );
 
     } catch(err) {
@@ -67,32 +65,33 @@ class ParkingRepository implements RepositoryInterface<Parking> {
     if(response.statusCode == 200) {
 
       final bodyAsJson = jsonDecode(response.body);
-      var parkingList = List<Parking>.empty(growable: true);
+      var parkingSpaceList = List<ParkingSpace>.empty(growable: true);
 
       for(var i=0; i< bodyAsJson.length;i++) {
-        final parking = Parking.fromJson(bodyAsJson[i]);
-        parkingList.add(parking);
+        final parkingSpace = ParkingSpace.fromJson(bodyAsJson[i]);
+        parkingSpaceList.add(parkingSpace);
       }
 
-      return parkingList;
+      return parkingSpaceList;
 
     } else {
 
-      throw Exception("Det gick inte att hämta parkeringar");
+      throw Exception("Det gick inte att hämta parkeringplatserna");
 
     }
 
   }
 
+
   @override
-  Future<Parking?> getById(int id) async {
+  Future<ParkingSpace?> getById(int id) async {
     
     dynamic response;
 
     try {
 
       response = await client.get(
-        Uri.parse("$baseUrl$path/$id")
+        Uri.parse('$baseUrl$path/$id')
       );
 
     } catch(err) {
@@ -104,26 +103,25 @@ class ParkingRepository implements RepositoryInterface<Parking> {
     if(response.statusCode == 200) {
     
       final bodyAsJson = jsonDecode(response.body);
-      Parking parking = Parking.fromJson(bodyAsJson);
-      return parking;
+      ParkingSpace parkingSpace = ParkingSpace.fromJson(bodyAsJson);
+      return parkingSpace;
     
     } else {
     
-      throw Exception("Det gick inte att hämta parkeringen med id $id");
+      throw Exception("Det gick inte att hämta parkeringsplatsen med id $id");
     
     }
 
   }
 
-  @override
-  Future<Parking?> update(int id, Parking item) async {
 
+  @override
+  Future<ParkingSpace?> update(int id, ParkingSpace item) async {
     
+    final body = item.toJson();
     dynamic response;
 
     try {
-
-      final body = item.toJson();
 
       response = await client.put(
         Uri.parse("$baseUrl$path/$id"),
@@ -140,19 +138,20 @@ class ParkingRepository implements RepositoryInterface<Parking> {
     if(response.statusCode == 200) {
   
       var bodyAsJson = jsonDecode(response.body);
-      return Parking.fromJson(bodyAsJson);
+      return ParkingSpace.fromJson(bodyAsJson);
       
     } else {
 
-      throw Exception("DEt gick inte att uppdatera parkeringen med id $id");
+      throw Exception("Det gick inte att uppdatera parkeringsplatsen med id $id");
 
     }
 
   }
 
-  @override
-  Future<Parking?> delete(int id) async {
 
+  @override
+  Future<ParkingSpace?> delete(int id) async {
+    
     dynamic response;
 
     try {
@@ -170,14 +169,15 @@ class ParkingRepository implements RepositoryInterface<Parking> {
     if(response.statusCode == 200) {
   
       var bodyAsJson = jsonDecode(response.body);
-      return Parking.fromJson(bodyAsJson);
+      return ParkingSpace.fromJson(bodyAsJson);
   
     } else {
 
-      throw Exception("Det gick inte att ta bort parkeringen med id $id");
+      throw Exception("Det gick inte att ta bort parkeringsplatsen med id $id");
 
     }
 
   }
+
 
 }
