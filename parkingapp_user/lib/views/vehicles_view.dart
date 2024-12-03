@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:parkingapp_user/repositories/parking_space_repository.dart';
-import 'package:shared/models/parking_space.dart';
+import 'package:parkingapp_user/repositories/vehicle_repository.dart';
+import 'package:shared/models/vehicle.dart';
 
-class ParkingSpacesView extends StatefulWidget {
-  const ParkingSpacesView({super.key});
+class VehiclesView extends StatefulWidget {
+  const VehiclesView({super.key});
 
   @override
-  State<ParkingSpacesView> createState() => _ParkingSpacesViewState();
+  State<VehiclesView> createState() => _VehiclesViewState();
 }
 
-class _ParkingSpacesViewState extends State<ParkingSpacesView> {
+class _VehiclesViewState extends State<VehiclesView> {
   
-  late Future<List<ParkingSpace>?> itemList;
+  late Future<List<Vehicle>?> itemList;
   bool dataLoaded = false;
 
-  Future<List<ParkingSpace>?> getParkingSpaceList() async {
-    List<ParkingSpace>? items;
+  Future<List<Vehicle>?> getVehiclesList() async {
+    List<Vehicle>? items;
     try{
-      items = await ParkingSpaceRepository().getAll();
+      items = await VehicleRepository().getAll();
       setState(() {
         dataLoaded = true;
       });
@@ -32,14 +32,14 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
     return items;
   }
 
-  ParkingSpace? selectedItem;
+  Vehicle? selectedItem;
 
   
 
   @override
   void initState() {
     super.initState();
-    itemList = getParkingSpaceList();
+    itemList = getVehiclesList();
   }
 
   @override
@@ -62,69 +62,32 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Parkeringsplatser", style: TextStyle(fontWeight: FontWeight.bold)),
-                FutureBuilder<List<ParkingSpace>?>(
+                const Text("Fordon", style: TextStyle(fontWeight: FontWeight.bold)),
+                FutureBuilder<List<Vehicle>?>(
                   future: itemList,
                   builder: (context, snapshot) {
                     if(snapshot.hasData) {
                       var items = snapshot.data!;
                       return Column(
                         children: [
-                          const Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 100,
-                                child: Text("Id", style: TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(
-                                width: 200, 
-                                child: Text("Adress", style: TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(
-                                width: 200, 
-                                child: Text("Kostnad/timme", style: TextStyle(fontWeight: FontWeight.bold)),
-                              )
-                            ]
-                          ),
                           ListView.builder(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemCount: items.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  setState((){
-                                    selectedItem = items[index];
-                                  });
-                                  //String? regId = selectedParking!.vehicle!.regId;
-                                  //var snackBar = SnackBar(content: Text("Parkeringen för $regId är vald"));
-                                  //ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                },
-                                child: MouseRegion(
-                                  cursor: SystemMouseCursors.click,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(8),
-                                    color: selectedItem == items[index] ? Colors.blueGrey[50] : Colors.white,
-                                    child: Row (
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: 100,
-                                          child:  Text(items[index].id.toString()),
-                                        ),
-                                        SizedBox(
-                                          width: 200,
-                                          child: Text(items[index].address),
-                                        ),
-                                        SizedBox(
-                                          width: 200,
-                                          child: Text(items[index].pricePerHour.toString()),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                )
+                              return MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: Card(
+                                  child: ListTile(
+                                    title: Text(items[index].regId),
+                                    onTap: () {
+                                      setState((){
+                                        selectedItem = items[index];
+                                      });
+                                    },
+                                    tileColor: selectedItem == items[index] ?  Colors.amber : Colors.blueGrey[50]
+                                  )
+                                ),
                               );
                             },
                           )
@@ -162,14 +125,14 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
                         onPressed: () async {
                           var item = await showItemForm(context, null);
                           if(item?.id == -1) {
-                            await ParkingSpaceRepository().add(item!);  
+                            await VehicleRepository().add(item!);  
                             setState(() {
-                              itemList = getParkingSpaceList();
+                              itemList = getVehiclesList();
                             }); 
                           }
                           
                         },
-                        child: const Text("Lägg till ny parkeringsplats")
+                        child: const Text("Lägg till nytt fordon")
                       ),
                   )
                 : const SizedBox.shrink(),
@@ -182,9 +145,9 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
                           onPressed: () async {
                             var item = await showItemForm(context, selectedItem);
                             if(item != null) {
-                              await ParkingSpaceRepository().update(item.id, item);
+                              await VehicleRepository().update(item.id, item);
                               setState(() {
-                                itemList = getParkingSpaceList();
+                                itemList = getVehiclesList();
                               });
                             }
                             
@@ -199,9 +162,9 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
                             if(selectedItem != null) {
                               var confirm = await showRemovalDialog(context, selectedItem!);
                               if(confirm == "confirm") {
-                                await ParkingSpaceRepository().delete(selectedItem!.id);
+                                await VehicleRepository().delete(selectedItem!.id);
                                 setState(() {
-                                  itemList = getParkingSpaceList();
+                                  itemList = getVehiclesList();
                                 });
                               }
                             }
@@ -222,21 +185,21 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
 
 }
 
-Future<ParkingSpace?> showItemForm (BuildContext context, ParkingSpace? item) {
+Future<Vehicle?> showItemForm (BuildContext context, Vehicle? item) {
   
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  String? address;
-  double pricePerHour = 0;
+  String? regId;
+  String? vehicleType;
 
   var isUpdate = item != null ? true: false;
 
 
-  return showDialog<ParkingSpace?>(
+  return showDialog<Vehicle?>(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title:  isUpdate ? const Text("Lägg till en ny parkeringsplats") : const Text("Uppdatera parkeringsplats"),
+        title:  isUpdate ? const Text("Uppdatera fordon") : const Text("Lägg till en nytt fordon"),
         content: Form(
           key: formKey,
           child: Column(
@@ -244,37 +207,30 @@ Future<ParkingSpace?> showItemForm (BuildContext context, ParkingSpace? item) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                initialValue: item?.address,
+                initialValue: item?.regId,
                 decoration: const InputDecoration(
-                  hintText: "Address",
+                  hintText: "Registreringsnummer",
                 ),
                 validator: (String? value) {
                   if(value == null || value.isEmpty) {
-                    return "Du måste fylla i en adress";
+                    return "Du måste fylla i ett registreringsnummer";
                   }
                   return null;
-                  //item?.address = value;
                 },
-                onSaved: (value) => address = value,
+                onSaved: (value) => regId = value,
               ),
               TextFormField(
-                initialValue: item?.pricePerHour.toString(),
+                initialValue: item?.vehicleType,
                 decoration: const InputDecoration(
-                  hintText: "Kostnad per timme",
+                  hintText: "Typ av fordon",
                 ),
                 validator: (String? value) {
-                  var pricePerHour = double.tryParse(value!);
-                  if(pricePerHour == null) {
-                    return "Du måste fylla i ett pris per timme";
+                  if(value == null || value.isEmpty) {
+                    return "Du måste välja vilken typ av fordon det är";
                   }
                   return null;
-                  //item?.pricePerHour = pricePerHour;
                 },
-                onSaved: (value) {
-                  if(value != null && double.tryParse(value) != null) {
-                    pricePerHour = double.parse(value);
-                  } 
-                }
+                onSaved: (value) => vehicleType = value,
               ),
               Padding(
                 padding: const EdgeInsets.only(top:32),
@@ -300,9 +256,9 @@ Future<ParkingSpace?> showItemForm (BuildContext context, ParkingSpace? item) {
                           // the form is invalid.
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
-                            
-                            item = ParkingSpace(id: item?.id, address: address!, pricePerHour: pricePerHour);
-                            
+                            if(regId != null && vehicleType != null) {
+                              item = Vehicle(id: item?.id, regId: regId!, vehicleType: vehicleType!);
+                            }
                             if(context.mounted) {
                               Navigator.of(context).pop(item);
                             }             
@@ -324,7 +280,7 @@ Future<ParkingSpace?> showItemForm (BuildContext context, ParkingSpace? item) {
 
 }
 
-Future<String?> showRemovalDialog(BuildContext context, ParkingSpace item) {
+Future<String?> showRemovalDialog(BuildContext context, Vehicle item) {
 
   // set up the button
   Widget okButton = TextButton(
@@ -347,7 +303,7 @@ Future<String?> showRemovalDialog(BuildContext context, ParkingSpace item) {
     context: context, 
     builder: (BuildContext builder) {
       return AlertDialog (
-        title:  const Text("Vill du ta bort parkeringsplatsen?"),
+        title:  const Text("Vill du ta bort fordonet?"),
         content: const Text(""),
         actions: [
           cancelButton,

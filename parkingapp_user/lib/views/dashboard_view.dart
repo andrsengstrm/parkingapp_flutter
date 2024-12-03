@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:parkingapp_user/repositories/parking_repository.dart';
-import 'package:parkingapp_user/repositories/parking_space_repository.dart';
+import 'package:parkingapp_user/repositories/vehicle_repository.dart';
 import 'package:shared/models/parking.dart';
-import 'package:shared/models/parking_space.dart';
+import 'package:shared/models/vehicle.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
@@ -16,9 +16,9 @@ class DashboardView extends StatefulWidget {
 class _DashboardViewState extends State<DashboardView> {
   
   late Future<List<Parking>?> parkingsList;
-  late Future<List<ParkingSpace>?> parkingSpacesList;
+  late Future<List<Vehicle>?> vehicleList;
   late int parkingsCount = 0;
-  late int parkingSpacesCount = 0;
+  late int vehiclesCount = 0;
 
   Future<List<Parking>?> getParkingsList() async {
     List<Parking>? items;
@@ -35,12 +35,12 @@ class _DashboardViewState extends State<DashboardView> {
     return items;
   }
 
-  Future<List<ParkingSpace>?> getParkingSpacesList() async {
-    List<ParkingSpace>? items;
+  Future<List<Vehicle>?> getVehiclesList() async {
+    List<Vehicle>? items;
     try{
-      items = await ParkingSpaceRepository().getAll();
+      items = await VehicleRepository().getAll();
       setState(() {
-        parkingSpacesCount = items!.length;
+        vehiclesCount = items!.length;
       });
       
     } catch(err) {
@@ -56,7 +56,7 @@ class _DashboardViewState extends State<DashboardView> {
   void initState() {
     super.initState();
     parkingsList = getParkingsList();
-    parkingSpacesList = getParkingSpacesList();
+    vehicleList = getVehiclesList();
   }
   
   @override
@@ -79,7 +79,7 @@ class _DashboardViewState extends State<DashboardView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text("Antal aktiva parkeringar"),
+                    const Text("Antal parkeringar"),
                     Text(parkingsCount.toString(), style: TextStyle(fontSize: 28))
                   ],
                 ),
@@ -92,8 +92,8 @@ class _DashboardViewState extends State<DashboardView> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text("Antal parkeringsplatser"),
-                    Text(parkingSpacesCount.toString(), style: TextStyle(fontSize: 28))
+                    const Text("Antal fordon"),
+                    Text(vehiclesCount.toString(), style: TextStyle(fontSize: 28))
                   ],
                 ),
               ),

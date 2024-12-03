@@ -52,39 +52,19 @@ class _ParkingsViewState extends State<ParkingsView> {
                 FutureBuilder<List<Parking>?>(
                   future: parkingsList,
                   builder: (context, snapshot) {
+                    var items = snapshot.data;
                     if(snapshot.hasData) {
                       return Column(
                         children: [
-                          const Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 100,
-                                child: Text("Id", style: TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(
-                                width: 200, 
-                                child: Text("Registreringsnummer", style: TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(
-                                width: 200, 
-                                child: Text("Adress", style: TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(
-                                width: 200, 
-                                child: Text("Starttid", style: TextStyle(fontWeight: FontWeight.bold)),
-                              )
-                            ]
-                          ),
-                          ListView.separated(
+                          ListView.builder(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
-                            itemCount: snapshot.data!.length,
+                            itemCount: items!.length,
                             itemBuilder: (BuildContext context, int index) {
                               return GestureDetector(
                                 onTap: () {
                                   setState((){
-                                    selectedItem = snapshot.data![index];
+                                    selectedItem = items[index];
                                   });
                                   //String? regId = selectedParking!.vehicle!.regId;
                                   //var snackBar = SnackBar(content: Text("Parkeringen för $regId är vald"));
@@ -92,35 +72,18 @@ class _ParkingsViewState extends State<ParkingsView> {
                                 },
                                 child: MouseRegion(
                                   cursor: SystemMouseCursors.click,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    color: selectedItem == snapshot.data![index] ? Colors.blueGrey[50] : Colors.white,
-                                    child: Row (
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: 100,
-                                          child:  Text(snapshot.data![index].id.toString()),
-                                        ),
-                                        SizedBox(
-                                          width: 200,
-                                          child: Text(snapshot.data![index].vehicle!.regId),
-                                        ),
-                                        SizedBox(
-                                          width: 200,
-                                          child: Text(snapshot.data![index].parkingSpace!.address),
-                                        ),
-                                        SizedBox(
-                                          width: 200,
-                                          child: Text(snapshot.data![index].startTime),
-                                        )
-                                      ],
-                                    ),
-                                  ),
+                                  child: Card(
+                                    child: ListTile(
+                                      title: Text(items![index].parkingSpace!.address),
+                                      trailing: const Icon(Icons.more_vert),
+                                    )
+                                  )
+                                    
+                                  
                                 )
                               );
                             },
-                            separatorBuilder: (BuildContext context, int index) => const Divider(),
+                            
                           )
                           
                         ]

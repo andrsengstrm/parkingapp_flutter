@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:parkingapp_user/views/dashboard_view.dart';
-import 'package:parkingapp_user/views/parking_spaces_view.dart';
+import 'package:parkingapp_user/views/vehicles_view.dart';
 import 'package:parkingapp_user/views/parkings_view.dart';
 
 class MainView extends StatefulWidget {
@@ -15,7 +15,7 @@ class _MainViewState extends State<MainView> {
   get destinations => const <NavigationDestination>[
     NavigationDestination(icon: Icon(Icons.dashboard), label:"Start"),
     NavigationDestination(icon: Icon(Icons.list), label:"Parkeringar"),
-    NavigationDestination(icon: Icon(Icons.list), label:"Parkeringsplatser")
+    NavigationDestination(icon: Icon(Icons.list), label:"Fordon")
   ];
 
   int _selectedIndex = 0;
@@ -23,7 +23,7 @@ class _MainViewState extends State<MainView> {
   var views = const [
     DashboardView(),
     ParkingsView(),
-    ParkingSpacesView()
+    VehiclesView()
   ];
 
   @override
