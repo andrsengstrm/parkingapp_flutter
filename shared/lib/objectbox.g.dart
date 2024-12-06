@@ -82,7 +82,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
       id: const obx_int.IdUid(3, 6204732547452475028),
       name: 'Person',
-      lastPropertyId: const obx_int.IdUid(3, 8269673697602762211),
+      lastPropertyId: const obx_int.IdUid(4, 5753084926534769011),
       flags: 0,
       properties: <obx_int.ModelProperty>[
         obx_int.ModelProperty(
@@ -98,6 +98,11 @@ final _entities = <obx_int.ModelEntity>[
         obx_int.ModelProperty(
             id: const obx_int.IdUid(3, 8269673697602762211),
             name: 'name',
+            type: 9,
+            flags: 0),
+        obx_int.ModelProperty(
+            id: const obx_int.IdUid(4, 5753084926534769011),
+            name: 'email',
             type: 9,
             flags: 0)
       ],
@@ -275,10 +280,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
         objectToFB: (Person object, fb.Builder fbb) {
           final personIdOffset = fbb.writeString(object.personId);
           final nameOffset = fbb.writeString(object.name);
-          fbb.startTable(4);
+          final emailOffset =
+              object.email == null ? null : fbb.writeString(object.email!);
+          fbb.startTable(5);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, personIdOffset);
           fbb.addOffset(2, nameOffset);
+          fbb.addOffset(3, emailOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -291,8 +299,13 @@ obx_int.ModelDefinition getObjectBoxModel() {
               .vTableGet(buffer, rootOffset, 6, '');
           final nameParam = const fb.StringReader(asciiOptimization: true)
               .vTableGet(buffer, rootOffset, 8, '');
-          final object =
-              Person(id: idParam, personId: personIdParam, name: nameParam);
+          final emailParam = const fb.StringReader(asciiOptimization: true)
+              .vTableGetNullable(buffer, rootOffset, 10);
+          final object = Person(
+              id: idParam,
+              personId: personIdParam,
+              name: nameParam,
+              email: emailParam);
 
           return object;
         }),
@@ -389,6 +402,10 @@ class Person_ {
   /// See [Person.name].
   static final name =
       obx.QueryStringProperty<Person>(_entities[2].properties[2]);
+
+  /// See [Person.email].
+  static final email =
+      obx.QueryStringProperty<Person>(_entities[2].properties[3]);
 }
 
 /// [Vehicle] entity fields to define ObjectBox queries.

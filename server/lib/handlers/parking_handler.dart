@@ -18,6 +18,7 @@ Future<Response> addParking(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -36,6 +37,7 @@ Future<Response> getAllParkings(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -55,6 +57,7 @@ Future<Response> getParkingById(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -76,6 +79,7 @@ Future<Response> updateParking(Request request) async {
   
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -95,6 +99,7 @@ Future<Response> deleteParking(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }

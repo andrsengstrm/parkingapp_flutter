@@ -18,6 +18,7 @@ Future<Response> addPerson(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -37,6 +38,7 @@ Future<Response> getAllPersons(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -55,6 +57,27 @@ Future<Response> getPersonById(Request request) async {
 
   } catch(err) {
 
+    print(err);
+    return Response.internalServerError();
+
+  }
+
+}
+
+Future<Response> getPersonByEmail(Request request) async {
+  
+  try {
+
+    print("Trying to get a person...");
+    
+    final email = request.params['email']!;
+    final person = await PersonRepository().getByEmail(email);
+    
+    return Response.ok(jsonEncode(person));
+
+  } catch(err) {
+
+    print(err);
     return Response.internalServerError();
 
   }
@@ -76,6 +99,7 @@ Future<Response> updatePerson(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -94,6 +118,7 @@ Future<Response> deletePerson(Request request) async {
     
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }

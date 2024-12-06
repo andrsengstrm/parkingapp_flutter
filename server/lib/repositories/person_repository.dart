@@ -18,6 +18,10 @@ class PersonRepository implements RepositoryInterface<Person> {
     return itemBox.get(id);
   }
 
+  Future<Person?> getByEmail(String email) async {
+    return itemBox.getAll().where((p) => p.email == email).firstOrNull;
+  }
+
 
   @override
   Future<List<Person>?> getAll() async {

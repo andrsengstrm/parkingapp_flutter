@@ -18,6 +18,7 @@ Future<Response> addParkingSpace(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -36,6 +37,7 @@ Future<Response> getAllParkingSpaces(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -56,6 +58,7 @@ Future<Response> getParkingSpaceById(Request request) async {
   
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -77,6 +80,7 @@ Future<Response> updateParkingSpace(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -96,6 +100,7 @@ Future<Response> deleteParkingSpace(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }

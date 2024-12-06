@@ -1,17 +1,17 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared/models/vehicle.dart';
+//import 'package:shared/helpers/helpers.dart';
+import 'package:shared/models/person.dart';
 import 'package:shared/repositories/repository_interface.dart';
 
-class VehicleRepository implements RepositoryInterface<Vehicle> {
+class PersonRepository implements RepositoryInterface<Person> {
   
   var client = http.Client();
   final baseUrl = "http://10.0.2.2:8080"; //Helpers().baseUrl;
-  final path = "/vehicle";
-
+  final path = "/person";
 
   @override
-  Future<Vehicle?> add(Vehicle item) async {
+  Future<Person?> add(Person item) async {
 
     final body = item.toJson();
     dynamic response;
@@ -33,12 +33,12 @@ class VehicleRepository implements RepositoryInterface<Vehicle> {
     if(response.statusCode == 200) {
     
       final bodyAsJson = jsonDecode(response.body);
-      Vehicle vehicle = Vehicle.fromJson(bodyAsJson);
-      return vehicle;
+      Person person = Person.fromJson(bodyAsJson);
+      return person;
     
     } else {
     
-      throw Exception("Det gick inte att lägga till fordonet");
+      throw Exception("Det gick inte att lägga till personen");
     
     }
 
@@ -46,8 +46,8 @@ class VehicleRepository implements RepositoryInterface<Vehicle> {
 
 
   @override
-  Future<List<Vehicle>?> getAll() async {
-
+  Future<List<Person>> getAll() async {
+    
     dynamic response;
 
     try {
@@ -65,28 +65,27 @@ class VehicleRepository implements RepositoryInterface<Vehicle> {
     if(response.statusCode == 200) {
 
       final bodyAsJson = jsonDecode(response.body);
-      var vehicleList = List<Vehicle>.empty(growable: true);
+      var personList = List<Person>.empty(growable: true);
 
       for(var i=0; i< bodyAsJson.length;i++) {
-        final vehicle = Vehicle.fromJson(bodyAsJson[i]);
-        vehicleList.add(vehicle);
+        final person = Person.fromJson(bodyAsJson[i]);
+        personList.add(person);
       }
 
-      return vehicleList;
+      return personList;
 
     } else {
 
-      throw Exception("Det gick inte att hämta fordonen");
+      throw Exception("Det gick inte att hämta personer");
 
     }
-
 
   }
 
 
   @override
-  Future<Vehicle?> getById(int id) async {
-    
+  Future<Person> getById(int id) async {
+
     dynamic response;
 
     try {
@@ -104,20 +103,51 @@ class VehicleRepository implements RepositoryInterface<Vehicle> {
     if(response.statusCode == 200) {
     
       final bodyAsJson = jsonDecode(response.body);
-      Vehicle vehicle = Vehicle.fromJson(bodyAsJson);
-      return vehicle;
+      Person person = Person.fromJson(bodyAsJson);
+      return person;
     
     } else {
     
-      throw Exception("Det gick inte att hämta forodonet med id $id");
+      throw Exception("Det gick inte att hämta personen med id $id");
     
     }
-
+  
   }
 
-  @override
-  Future<Vehicle?> update(int id, Vehicle item) async {
+  Future<Person?> getByEmail(String email) async {
 
+    dynamic response;
+
+    try {
+
+      response = await client.get(
+        Uri.parse("$baseUrl$path/getbyemail/$email")
+      );
+
+    } catch(err) {
+
+      throw Exception("Det gick inte att få kontakt med servern. $err");
+
+    }
+    
+    if(response.statusCode == 200) {
+    
+      final bodyAsJson = jsonDecode(response.body);
+      Person person = Person.fromJson(bodyAsJson);
+      return person;
+    
+    } else {
+    
+      throw Exception("Det gick inte att hämta personen med email $email");
+    
+    }
+  
+  }
+
+
+  @override
+  Future<Person?> update(int id, Person item) async {
+  
     final body = item.toJson();
     dynamic response;
 
@@ -138,19 +168,20 @@ class VehicleRepository implements RepositoryInterface<Vehicle> {
     if(response.statusCode == 200) {
   
       var bodyAsJson = jsonDecode(response.body);
-      return Vehicle.fromJson(bodyAsJson);
+      return Person.fromJson(bodyAsJson);
       
     } else {
 
-      throw Exception("DEt gick inte att uppdatera fordonet med id $id");
+      throw Exception("DEt gick inte att uppdatera personen med id $id");
 
     }
-
+  
   }
 
+
   @override
-  Future<Vehicle?> delete(int id) async {
-    
+  Future<Person> delete(int id) async {
+  
     dynamic response;
 
     try {
@@ -168,11 +199,11 @@ class VehicleRepository implements RepositoryInterface<Vehicle> {
     if(response.statusCode == 200) {
   
       var bodyAsJson = jsonDecode(response.body);
-      return Vehicle.fromJson(bodyAsJson);
+      return Person.fromJson(bodyAsJson);
   
     } else {
 
-      throw Exception("Det gick inte att ta bort fordonet med id $id");
+      throw Exception("Det gick inte att ta bort personen med id $id");
 
     }
   

@@ -19,6 +19,7 @@ Future<Response> addVehicle(Request request) async {
   
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -37,6 +38,7 @@ Future<Response> getAllVehicles(Request request) async {
   
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -56,6 +58,7 @@ Future<Response> getVehicleById(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -77,6 +80,7 @@ Future<Response> updateVehicle(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }
@@ -96,6 +100,7 @@ Future<Response> deleteVehicle(Request request) async {
 
   } catch(err) {
 
+    print(err);
     return Response.internalServerError();
 
   }

@@ -43,6 +43,7 @@ class ServerConfig {
     router.post('/person', person_handler.addPerson);
     router.get('/person', person_handler.getAllPersons);
     router.get('/person/<id>', person_handler.getPersonById);
+    router.get('/person/getbyemail/<email>', person_handler.getPersonByEmail);
     router.put('/person/<id>', person_handler.updatePerson);
     router.delete('/person/<id>', person_handler.deletePerson);
 
