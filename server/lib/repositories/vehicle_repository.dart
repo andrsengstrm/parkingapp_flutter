@@ -18,6 +18,11 @@ class VehicleRepository implements RepositoryInterface<Vehicle> {
     return itemBox.get(id);
   }
 
+  Future<List<Vehicle>?> getByOwnerEmail(String email) async {
+    var items = itemBox.getAll().where((v) => v.owner.email == email).toList().cast<Vehicle>();
+    return items;
+  }
+
 
   @override
   Future<List<Vehicle>?> getAll() async {

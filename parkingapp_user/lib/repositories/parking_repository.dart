@@ -85,6 +85,44 @@ class ParkingRepository implements RepositoryInterface<Parking> {
 
   }
 
+  Future<List<Parking>?> getAllByVehicleOwnerEmail(String email) async {
+
+    dynamic response;
+
+    debugPrint(baseUrl);
+
+    try {
+
+      response = await client.get(
+        Uri.parse("$baseUrl$path/getbyvehicleowneremail/$email")
+      );
+
+    } catch(err) {
+
+      throw Exception("Det gick inte att få kontakt med servern. $err");
+
+    }
+
+    if(response.statusCode == 200) {
+
+      final bodyAsJson = jsonDecode(response.body);
+      var parkingList = List<Parking>.empty(growable: true);
+
+      for(var i=0; i< bodyAsJson.length;i++) {
+        final parking = Parking.fromJson(bodyAsJson[i]);
+        parkingList.add(parking);
+      }
+
+      return parkingList;
+
+    } else {
+
+      throw Exception("Det gick inte att hämta parkeringar");
+
+    }
+
+  }
+
   @override
   Future<Parking?> getById(int id) async {
     

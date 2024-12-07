@@ -69,7 +69,7 @@ class _MainViewState extends State<MainView> {
 
   Widget gotoView(int index) {
     if(index == 0) {
-      return const ParkingsView();
+      return ParkingsView(user: person!);
     } else if(index == 1) {
       return VehiclesView(user: person!);
     } else if(index == 2) {

@@ -14,9 +14,9 @@ class VehiclesView extends StatefulWidget {
 
 class _VehiclesViewState extends State<VehiclesView> {
   
-  late Person person;
+  late Person user;
 
-  Person getPerson () {
+  Person getCurrentUser () {
     return widget.user;
   }
 
@@ -26,7 +26,7 @@ class _VehiclesViewState extends State<VehiclesView> {
   Future<List<Vehicle>?> getVehiclesList() async {
     List<Vehicle>? items;
     try{
-      items = await VehicleRepository().getAll();
+      items = await VehicleRepository().getByOwnerEmail(user.email);
       setState(() {
         dataLoaded = true;
       });
@@ -46,7 +46,7 @@ class _VehiclesViewState extends State<VehiclesView> {
   @override
   void initState() {
     super.initState();
-    person = getPerson();
+    user = getCurrentUser();
     itemList = getVehiclesList();
   }
 
@@ -89,7 +89,7 @@ class _VehiclesViewState extends State<VehiclesView> {
                                     child: ListTile(
                                       title: Text(items[index].regId),
                                       onTap: () async {
-                                        var item = await showItemForm(context, items[index], person);
+                                        var item = await showItemForm(context, items[index], user);
                                         if(item != null) {
                                           await VehicleRepository().update(item.id, item);
                                           setState(() {
@@ -135,7 +135,7 @@ class _VehiclesViewState extends State<VehiclesView> {
                     minimumSize: const Size(double.infinity, 50), // Set minimum width and height
                   ),
                   onPressed: () async {
-                    var item = await showItemForm(context, null, person);
+                    var item = await showItemForm(context, null, user);
                     if(item?.id == -1) {
                       await VehicleRepository().add(item!);  
                       setState(() {

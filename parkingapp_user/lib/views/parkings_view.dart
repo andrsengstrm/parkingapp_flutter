@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:parkingapp_user/repositories/parking_space_repository.dart';
+import 'package:parkingapp_user/repositories/vehicle_repository.dart';
+import 'package:shared/helpers/helpers.dart';
 import 'package:shared/models/parking.dart';
 import 'package:parkingapp_user/repositories/parking_repository.dart';
+import 'package:shared/models/parking_space.dart';
+import 'package:shared/models/person.dart';
+import 'package:shared/models/vehicle.dart';
 
 class ParkingsView extends StatefulWidget {
   
-  const ParkingsView({super.key});
+  const ParkingsView({super.key, required this.user});
+
+  final Person user;
 
   @override
   State<ParkingsView> createState() => _ParkingsViewState();
@@ -13,19 +21,54 @@ class ParkingsView extends StatefulWidget {
 
 class _ParkingsViewState extends State<ParkingsView> {
 
+  late Person user;
+  late Future<List<Vehicle>?> vehiceList;
+  late Future<List<ParkingSpace>?> parkingSpaceList;
   late Future<List<Parking>?> parkingsList;
+  Parking? selectedParking;
 
-  Future<List<Parking>> getParkingsList() async {
-    var parkingsList = await ParkingRepository().getAll();
+  Person getCurrentUser () {
+    return widget.user;
+  }
+
+  Future<List<Parking>> getParkingsList(email) async {
+    var parkingsList = await ParkingRepository().getAllByVehicleOwnerEmail(email);
     return parkingsList!;
   }
 
-  Parking? selectedItem;
+  Future<Parking?> startParking(Parking newParking) async {
+    var startedParking = await ParkingRepository().add(newParking);
+    return startedParking;
+  }
+
+  Future<List<Vehicle>?> getVehicles() async {
+    try {
+      var items = await VehicleRepository().getByOwnerEmail(user.email);
+      return items;
+    } catch(err) {
+      debugPrint(err.toString());
+    }
+    return null;
+  }
+
+  Future<List<ParkingSpace>?> getParkingSpaces() async {
+    try {
+      var items = await ParkingSpaceRepository().getAll();
+      return items;
+    } catch(err) {
+      debugPrint(err.toString());
+    }
+    return null;
+  }
 
   @override
   void initState() {
     super.initState();
-    parkingsList = getParkingsList();
+    user = getCurrentUser();
+    vehiceList = getVehicles();
+    parkingSpaceList = getParkingSpaces();
+    parkingsList = getParkingsList(user.email);
+    selectedParking = null;
   }
 
   @override
@@ -36,7 +79,7 @@ class _ParkingsViewState extends State<ParkingsView> {
         GestureDetector(
           onTap: () {
             setState(() {
-              selectedItem = null;
+              selectedParking = null;
             });
           },
           child: Container(
@@ -48,58 +91,80 @@ class _ParkingsViewState extends State<ParkingsView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [ 
+                Container(
+                  alignment: const Alignment(0, 0),
+                  padding: const EdgeInsets.all(64),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(240, 240), // Set minimum width and height
+                    ),
+                    onPressed: () {
+                      var parking = showStartParkingDialog(context, vehiceList, parkingSpaceList);
+                    },
+                    child: Text("Starta parkering")
+                  ),
+                ),
                 const Text("Aktiva parkeringar", style: TextStyle(fontWeight: FontWeight.bold)),
                 FutureBuilder<List<Parking>?>(
                   future: parkingsList,
                   builder: (context, snapshot) {
-                    var items = snapshot.data;
                     if(snapshot.hasData) {
-                      return Column(
-                        children: [
-                          ListView.builder(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: items!.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  setState((){
-                                    selectedItem = items[index];
-                                  });
-                                  //String? regId = selectedParking!.vehicle!.regId;
-                                  //var snackBar = SnackBar(content: Text("Parkeringen för $regId är vald"));
-                                  //ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                },
-                                child: MouseRegion(
-                                  cursor: SystemMouseCursors.click,
-                                  child: Card(
-                                    child: ListTile(
-                                      title: Text(items![index].parkingSpace!.address),
-                                      trailing: const Icon(Icons.more_vert),
+                      var items = snapshot.data;
+                      if(items!.isNotEmpty) {
+                        return Column(
+                          children: [
+                            ListView.builder(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: items!.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState((){
+                                      selectedParking = items[index];
+                                    });
+                                    //String? regId = selectedParking!.vehicle!.regId;
+                                    //var snackBar = SnackBar(content: Text("Parkeringen för $regId är vald"));
+                                    //ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                  },
+                                  child: MouseRegion(
+                                    cursor: SystemMouseCursors.click,
+                                    child: Card(
+                                      child: ListTile(
+                                        title: Text(items![index].parkingSpace!.address),
+                                        trailing: const Icon(Icons.more_vert),
+                                      )
                                     )
-                                  )
+                                      
                                     
-                                  
-                                )
-                              );
-                            },
+                                  )
+                                );
+                              },
+                              
+                            )
                             
-                          )
-                          
-                        ]
-                      );
+                          ]
+                        );
+                      } else {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 8, bottom: 8),
+                          child: Text("Det finns inga aktiva parkeringar"),
+                        );
+                      }
                     } else if(snapshot.hasError) {
                       return const Padding(
                         padding: EdgeInsets.only(top: 8, bottom: 8),
                         child: Text("Det gick inte att hämta data!"),
                       );
-                    }
+                    } 
+                    
                     return const Padding(
                       padding: EdgeInsets.only(top: 16, right: 16, bottom: 16),
                       child: LinearProgressIndicator(
                         minHeight: 1,
                       )
                     );
+                    
                   }
                 )
               ],
@@ -109,13 +174,13 @@ class _ParkingsViewState extends State<ParkingsView> {
         Positioned(
           bottom: 16,
           left: 16,
-          child: selectedItem != null ?
+          child: selectedParking != null ?
             Row (
               children: [
                 ElevatedButton (
                   onPressed: () {
-                    if(selectedItem != null) {
-                      showAlertDialog(context, selectedItem!);
+                    if(selectedParking != null) {
+                      showSelectedParkingDialog(context, selectedParking!);
                     }
                   },
                   child: const Text("Visa detaljer")
@@ -132,7 +197,52 @@ class _ParkingsViewState extends State<ParkingsView> {
 
 }
 
-showAlertDialog(BuildContext context, Parking selectedParking) {
+showStartParkingDialog(BuildContext context, Future<List<Vehicle>?> vehiceList, Future<List<ParkingSpace>?> parkingSpaceList ) {
+
+
+  // set up the button
+  Widget okButton = TextButton(
+    child: const Text("Starta pakering"),
+    onPressed: () { 
+      String startTime = Helpers().formatDate(DateTime.now());
+      Parking parking = Parking(startTime: startTime);
+      Navigator.of(context).pop(parking); // dismiss dialog
+    },
+  );
+
+  Widget cancelButton = TextButton( 
+    child: const Text("Avbryt"),
+    onPressed: () { 
+      Navigator.of(context).pop(); // dismiss dialog
+    },
+  );
+
+    // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: const Text("Starta parkering"),
+    content: const Column(
+      children: [
+        Text("Välj fordon för din parkering"),
+        
+        Text("Välj parkerigsplats för din parkering"),
+      ]
+    ),
+    actions: [
+      cancelButton,
+      okButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}
+
+showSelectedParkingDialog(BuildContext context, Parking selectedParking) {
 
   // set up the button
   Widget okButton = TextButton(

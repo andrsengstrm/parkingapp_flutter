@@ -19,14 +19,14 @@ class _AccountViewState extends State<AccountView> {
 
   bool editMode = false;
 
-  Person getPerson () {
+  Person getCurrentUser () {
     return widget.user;
   }
 
   @override
   void initState() {
     super.initState();
-    person = getPerson();
+    person = getCurrentUser();
   }
 
   @override

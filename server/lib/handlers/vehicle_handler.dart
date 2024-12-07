@@ -65,6 +65,25 @@ Future<Response> getVehicleById(Request request) async {
 
 }
 
+Future<Response> getVehicleByOwnerEmail(Request request) async {
+  
+  try {
+  
+    print("Trying to get vehicles by email...");
+    final email = request.params['email']!;
+    var vehicleList = await VehicleRepository().getByOwnerEmail(email);
+    
+    return Response.ok(jsonEncode(vehicleList));
+  
+  } catch(err) {
+
+    print(err);
+    return Response.internalServerError();
+
+  }
+
+}
+
 Future<Response> updateVehicle(Request request) async {
 
   try {

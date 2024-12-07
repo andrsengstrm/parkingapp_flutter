@@ -64,6 +64,28 @@ Future<Response> getParkingById(Request request) async {
 
 }
 
+Future<Response> getParkingByVehicleOwnerId(Request request) async {
+
+  try {
+  
+    print("Trying to get parking by email...");
+    
+    final email = request.params['email']!;
+    print("Email: $email");
+    final parking = await ParkingRepository().getByVehicleOwnerEmail(email);
+    
+    return Response.ok(jsonEncode(parking));
+
+  } catch(err) {
+
+    print(err);
+    return Response.internalServerError();
+
+  }
+
+}
+
+
 Future<Response> updateParking(Request request) async {
 
   try {

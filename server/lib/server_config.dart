@@ -51,6 +51,7 @@ class ServerConfig {
     router.post('/vehicle', vehicle_handler.addVehicle);
     router.get('/vehicle', vehicle_handler.getAllVehicles);
     router.get('/vehicle/<id>', vehicle_handler.getVehicleById);
+    router.get('/vehicle/getbyowneremail/<email>', vehicle_handler.getVehicleByOwnerEmail);
     router.put('/vehicle/<id>', vehicle_handler.updateVehicle);
     router.delete('/vehicle/<id>', vehicle_handler.deleteVehicle);
 
@@ -65,6 +66,7 @@ class ServerConfig {
     router.post('/parking', parking_handler.addParking);
     router.get('/parking', parking_handler.getAllParkings);
     router.get('/parking/<id>', parking_handler.getParkingById);
+    router.get('/parking/getbyvehicleowneremail/<email>', parking_handler.getParkingByVehicleOwnerId);
     router.put('/parking/<id>', parking_handler.updateParking);
     router.delete('/parking/<id>', parking_handler.deleteParking);
 

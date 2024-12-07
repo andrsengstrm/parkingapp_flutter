@@ -18,6 +18,11 @@ class ParkingRepository implements RepositoryInterface<Parking> {
     return itemBox.get(id);
   } 
 
+  Future<List<Parking>?> getByVehicleOwnerEmail(String email) async {
+    var itemList = itemBox.getAll().where((p) => p.vehicle.owner.email == email).cast<Parking>().toList();
+    return itemList;
+  } 
+
   @override
   Future<List<Parking>?> getAll() async {
     var itemList = itemBox.getAll().cast<Parking>();
