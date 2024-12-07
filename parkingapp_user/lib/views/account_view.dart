@@ -15,7 +15,7 @@ class _AccountViewState extends State<AccountView> {
   
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  late Person person;
+  late Person user;
 
   bool editMode = false;
 
@@ -26,7 +26,7 @@ class _AccountViewState extends State<AccountView> {
   @override
   void initState() {
     super.initState();
-    person = getCurrentUser();
+    user = getCurrentUser();
   }
 
   @override
@@ -44,7 +44,7 @@ class _AccountViewState extends State<AccountView> {
             children: [
               const Text("Mitt konto", style: TextStyle(fontWeight: FontWeight.bold)),
               TextFormField(
-                initialValue: person.name,
+                initialValue: user.name,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: "Namn",
@@ -56,10 +56,10 @@ class _AccountViewState extends State<AccountView> {
                   }
                   return null;
                 },
-                onSaved: (value) => person.name = value!,
+                onSaved: (value) => user.name = value!,
               ),
               TextFormField(
-                initialValue: person.personId,
+                initialValue: user.personId,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: "Personnummer",
@@ -71,10 +71,10 @@ class _AccountViewState extends State<AccountView> {
                   }
                   return null;
                 },
-                onSaved: (value) => person.personId = value!,
+                onSaved: (value) => user.personId = value!,
               ),
               TextFormField(
-                initialValue: person.email,
+                initialValue: user.email,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: "Email",
@@ -86,7 +86,7 @@ class _AccountViewState extends State<AccountView> {
                   }
                   return null;
                 },
-                onSaved: (value) => person.email = value!,
+                onSaved: (value) => user.email = value!,
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -109,7 +109,7 @@ class _AccountViewState extends State<AccountView> {
                   if (formKey.currentState!.validate()) {
                     formKey.currentState!.save();
                     
-                    var updatedPerson = Person(id: person.id, name: person.name, personId: person.personId, email: person.email);
+                    var updatedPerson = Person(id: user.id, name: user.name, personId: user.personId, email: user.email);
                     var personReturned = await PersonRepository().update(updatedPerson.id, updatedPerson);    
                     if(personReturned != null) {
                       setState(() {
@@ -143,7 +143,7 @@ class _AccountViewState extends State<AccountView> {
                     children: [
                       const Text("Namn"),
                       Text(
-                        person.name,
+                        user.name,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold
@@ -151,7 +151,7 @@ class _AccountViewState extends State<AccountView> {
                       const SizedBox(height: 8),
                       const Text("Personnummer"),
                       Text(
-                        person.personId,
+                        user.personId,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold
@@ -159,7 +159,7 @@ class _AccountViewState extends State<AccountView> {
                       const SizedBox(height: 8),
                       const Text("Email"),
                       Text(
-                        person.email!,
+                        user.email!,
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold

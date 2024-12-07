@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:parkingapp_user/repositories/parking_space_repository.dart';
 import 'package:parkingapp_user/repositories/vehicle_repository.dart';
 import 'package:shared/helpers/helpers.dart';
@@ -101,7 +102,7 @@ class _ParkingsViewState extends State<ParkingsView> {
                     onPressed: () {
                       var parking = showStartParkingDialog(context, vehiceList, parkingSpaceList);
                     },
-                    child: Text("Starta parkering")
+                    child: const Text("Starta parkering")
                   ),
                 ),
                 const Text("Aktiva parkeringar", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -197,16 +198,19 @@ class _ParkingsViewState extends State<ParkingsView> {
 
 }
 
-showStartParkingDialog(BuildContext context, Future<List<Vehicle>?> vehiceList, Future<List<ParkingSpace>?> parkingSpaceList ) {
+showStartParkingDialog(BuildContext context, Future<List<Vehicle>?> vehicleList, Future<List<ParkingSpace>?> parkingSpaceList ) {
 
+  late Vehicle selectedVehicle;
+  late ParkingSpace selectedParkingSpace;
 
   // set up the button
   Widget okButton = TextButton(
     child: const Text("Starta pakering"),
     onPressed: () { 
       String startTime = Helpers().formatDate(DateTime.now());
-      Parking parking = Parking(startTime: startTime);
-      Navigator.of(context).pop(parking); // dismiss dialog
+      Parking newParking = Parking(vehicle: selectedVehicle, parkingSpace: selectedParkingSpace, startTime: startTime);
+      debugPrint(newParking.vehicle!.regId);
+      Navigator.of(context).pop(newParking); // dismiss dialog
     },
   );
 
@@ -220,16 +224,69 @@ showStartParkingDialog(BuildContext context, Future<List<Vehicle>?> vehiceList, 
     // set up the AlertDialog
   AlertDialog alert = AlertDialog(
     title: const Text("Starta parkering"),
-    content: const Column(
-      children: [
-        Text("Välj fordon för din parkering"),
-        
-        Text("Välj parkerigsplats för din parkering"),
-      ]
-    ),
+    content: StatefulBuilder(
+      builder:(BuildContext context, StateSetter setState){
+      return Column(
+        children: [
+          const Text("Välj fordon för din parkering"),
+          FutureBuilder<List<Vehicle>?>(
+            future: vehicleList,
+            builder: (context, snapshot) {
+              if(snapshot.hasData) {
+                var items = snapshot.data;
+                if(items!.isNotEmpty) {
+                  return DropdownMenu<Vehicle>(
+                    initialSelection: items.first,
+                    onSelected: (Vehicle? value) {
+                      setState((){
+                        selectedVehicle = value!;
+                      });
+                    },
+                    dropdownMenuEntries: items.map<DropdownMenuEntry<Vehicle>>((Vehicle v) {
+                      return DropdownMenuEntry<Vehicle>(
+                        value: v,
+                        label: v.regId,
+                      );
+                    }).toList(),    
+                  );
+                }
+              }
+              return const Text("Det gick inte att visa fordon");
+            }
+          ),
+          const Text("Välj parkerigsplats för din parkering"),
+          FutureBuilder<List<ParkingSpace>?>(
+            future: parkingSpaceList,
+            builder: (context, snapshot) {
+              if(snapshot.hasData) {
+                var items = snapshot.data;
+                if(items!.isNotEmpty) {
+                  return DropdownMenu<ParkingSpace>(
+                    initialSelection: items.first,
+                    onSelected: (ParkingSpace? value) {
+                      setState((){
+                        selectedParkingSpace = value!;
+                      });
+                    },
+                    dropdownMenuEntries: items.map<DropdownMenuEntry<ParkingSpace>>((ParkingSpace v) {
+                      return DropdownMenuEntry<ParkingSpace>(
+                        value: v,
+                        label: v.address,
+                      );
+                    }).toList(),    
+                  );
+                }
+              }
+              return const Text("Det gick inte att visa fordon");
+            }
+          ),
+        ]
+      );
+      }
+  ),
     actions: [
       cancelButton,
-      okButton,
+      okButton
     ],
   );
 
