@@ -1,8 +1,7 @@
 # Parkingapp Flutter
-This app har 4 different repos:
-Server - This is the serverpart based on objectbox
-Shared - These are shared models that is user in Server, Parkingapp User and Parkingapp Admin
-Parkingapp User - This is the mobile-app for endusers
-Parkingapp Admin - This is the desktop-app for admins
-
-There is an old repo called CLI, this is not longer used.
+Projektet har 4 olika repos:
+Server - Server baserad på Objectbox för att spara data.
+Shared - Delade datamodels som används av Server, Parkingapp_admin och Parkingapp_user.
+Parkingapp_admin - Desktop-app för admins av systemet.
+Parkingapp_user - Mobil-app för slutanvändare.
+Repot CLI används inte längre.
