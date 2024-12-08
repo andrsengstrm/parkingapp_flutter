@@ -1,0 +1,6 @@
+# Parkingapp Flutter
+This app har 4 different repos:
+Server - This is the serverpart based on objectbox
+Shared - These are shared models that is user in Server, Parkingapp User and Parkingapp Admin
+Parkingapp User - This is the mobile-app for endusers
+Parkingapp Admin - This is the desktop-app for admins-
