@@ -90,25 +90,11 @@ class _AccountViewState extends State<AccountView> {
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50), // Set minimum width and height
-                ),
-                onPressed: () {
-                  setState(() {
-                    editMode = false;
-                  });       
-                },
-                child: const Text("Avbryt"),
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50), // Set minimum width and height
+                  minimumSize: const Size(double.infinity, 50),
                 ),
                 onPressed: () async {
-                  // Validate will return true if the form is valid, or false if
-                  // the form is invalid.
                   if (formKey.currentState!.validate()) {
                     formKey.currentState!.save();
-                    
                     var updatedPerson = Person(id: user.id, name: user.name, personId: user.personId, email: user.email);
                     var personReturned = await PersonRepository().update(updatedPerson.id, updatedPerson);    
                     if(personReturned != null) {
@@ -121,13 +107,23 @@ class _AccountViewState extends State<AccountView> {
                 },
                 child: const Text("Spara"),
               ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                onPressed: () {
+                  setState(() {
+                    editMode = false;
+                  });       
+                },
+                child: const Text("Avbryt"),
+              ),
             ],
           ),
         )
       )
       : Stack(
         fit: StackFit.expand,
-        //crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             alignment: Alignment.topLeft,
@@ -136,37 +132,32 @@ class _AccountViewState extends State<AccountView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text("Mitt konto", style: TextStyle(fontWeight: FontWeight.bold)),
-                Padding(
-                  padding: const EdgeInsets.only(top: 8, bottom: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text("Namn"),
-                      Text(
-                        user.name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold
-                        )),
-                      const SizedBox(height: 8),
-                      const Text("Personnummer"),
-                      Text(
-                        user.personId,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold
-                        )),
-                      const SizedBox(height: 8),
-                      const Text("Email"),
-                      Text(
-                        user.email!,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold
-                        )),
-                    ],
+                const SizedBox(height: 8),
+                const Text("Namn"),
+                Text(
+                  user.name,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
                   )
-                )
+                ),
+                const SizedBox(height: 8),
+                const Text("Personnummer"),
+                Text(
+                  user.personId,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  )
+                ),
+                const SizedBox(height: 8),
+                const Text("Email"),
+                Text(
+                  user.email!,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold
+                  ))
                 
              ]
             ),
@@ -179,7 +170,7 @@ class _AccountViewState extends State<AccountView> {
               padding: const EdgeInsets.only(top: 8, bottom: 8),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50), // Set minimum width and height
+                  minimumSize: const Size(double.infinity, 50),
                 ),
                 onPressed: () {
                   setState(() {
@@ -189,8 +180,6 @@ class _AccountViewState extends State<AccountView> {
                 child: const Text("Redigera"))
             ),
           )
-          
-          
         ],
       )
     );

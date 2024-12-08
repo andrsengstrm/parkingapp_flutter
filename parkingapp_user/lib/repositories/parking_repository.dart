@@ -7,7 +7,7 @@ import 'package:shared/repositories/repository_interface.dart';
 class ParkingRepository implements RepositoryInterface<Parking> {
 
   var client = http.Client();
-  final baseUrl = "http://10.0.2.2:8080";  //Helpers().baseUrl;
+  final baseUrl = "http://10.0.2.2:8080";
   final path = "/parking";
 
   @override

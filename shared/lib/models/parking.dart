@@ -62,11 +62,36 @@ class Parking {
     "endTime": endTime
   };
 
-  //calculate the price for the parking
   String getCostForParking() {
 
     double cost = 0;
-    
+
+    //caclulate differnce in milliseconds from epoch. If parking is not finished we use now() to get the current cost
+    int start = DateTime.parse(startTime).millisecondsSinceEpoch;
+    int end =  0;
+    if(endTime != null) {
+      end = DateTime.parse(endTime!).millisecondsSinceEpoch;
+    } else {
+      end = DateTime.now().millisecondsSinceEpoch;
+    }
+    //int end = DateTime.tryParse(selectedParking.endTime) != null ? DateTime.parse(endTime!).millisecondsSinceEpoch : ;
+    int total = end - start;
+
+    //convert to hours and calculate the cost
+    double totalHours = total / 3600000;
+    double ratePerHour = parkingSpace!.pricePerHour;
+    cost =  totalHours * ratePerHour; //parkingSpace.pricePerHour;
+
+    return cost.toStringAsFixed(2);
+
+  }
+
+  //calculate the price for the parking
+  /*
+  String getCostForParking() {
+
+    double cost = 0;
+
     //caclulate differnce in milliseconds from epoch. If parking is not finished we use now() to get the current cost
     int start = DateTime.parse(startTime).millisecondsSinceEpoch;
     int end =  DateTime.tryParse(endTime!) != null ? DateTime.parse(endTime!).millisecondsSinceEpoch : DateTime.now().millisecondsSinceEpoch;
@@ -79,7 +104,5 @@ class Parking {
     return cost.toStringAsFixed(2);
 
   }
-
-
-
+  */
 }

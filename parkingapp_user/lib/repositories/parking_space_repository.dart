@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared/helpers/helpers.dart';
 import 'package:shared/models/parking_space.dart';
 import 'package:shared/repositories/repository_interface.dart';
 
 class ParkingSpaceRepository implements RepositoryInterface<ParkingSpace> {
   
   var client = http.Client();
-  final baseUrl = Helpers().baseUrl;
+  final baseUrl = "http://10.0.2.2:8080";
   final path = "/parkingspace";
   
   @override

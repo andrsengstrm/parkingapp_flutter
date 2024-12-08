@@ -64,64 +64,69 @@ class _VehiclesViewState extends State<VehiclesView> {
                 selectedItem = null;
               });
             },
-            child: Container(
-              alignment: Alignment.topLeft,
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Fordon", style: TextStyle(fontWeight: FontWeight.bold)),
-                  FutureBuilder<List<Vehicle>?>(
-                    future: itemList,
-                    builder: (context, snapshot) {
-                      if(snapshot.hasData) {
-                        var items = snapshot.data!;
-                        return Column(
-                          children: [
-                            ListView.builder(
-                              scrollDirection: Axis.vertical,
-                              shrinkWrap: true,
-                              itemCount: items.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return MouseRegion(
-                                  cursor: SystemMouseCursors.click,
-                                  child: Card(
-                                    child: ListTile(
-                                      title: Text(items[index].regId),
-                                      onTap: () async {
-                                        var item = await showItemForm(context, items[index], user);
-                                        if(item != null) {
-                                          await VehicleRepository().update(item.id, item);
-                                          setState(() {
-                                            itemList = getVehiclesList();
-                                          });
-                                        }
-                                      },
-                                      //tileColor: selectedItem == items[index] ?  Colors.amber : Colors.blueGrey[50]
-                                    )
-                                  ),
-                                );
-                              },
-                            )
-                            
-                          ]
-                        );
-                      } else if(snapshot.hasError) {
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Container(
+                alignment: Alignment.topLeft,
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("Fordon", style: TextStyle(fontWeight: FontWeight.bold)),
+                    FutureBuilder<List<Vehicle>?>(
+                      future: itemList,
+                      builder: (context, snapshot) {
+                        if(snapshot.hasData) {
+                          var items = snapshot.data!;
+                          if(items.isNotEmpty) {
+                            return Column(
+                              children: [
+                                ListView.builder(
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  itemCount: items.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return MouseRegion(
+                                      cursor: SystemMouseCursors.click,
+                                      child: Card(
+                                        child: ListTile(
+                                          title: Text(items[index].regId),
+                                          onTap: () async {
+                                            var item = await showVehicleForm(context, items[index], user);
+                                            if(item != null) {
+                                              await VehicleRepository().update(item.id, item);
+                                              setState(() {
+                                                itemList = getVehiclesList();
+                                              });
+                                            }
+                                          },
+                                        )
+                                      ),
+                                    );
+                                  },
+                                )
+                              ]
+                            );
+                          } else {
+                            return const Text("Det finns inga regstrerade fordon");
+                          }
+                        } else if(snapshot.hasError) {
+                          return const Padding(
+                            padding: EdgeInsets.only(top: 8, bottom: 8),
+                            child: Text("Det gick inte att hämta data!"),
+                          );
+                        }
                         return const Padding(
-                          padding: EdgeInsets.only(top: 8, bottom: 8),
-                          child: Text("Det gick inte att hämta data!"),
+                          padding: EdgeInsets.only(top: 16, right: 16, bottom: 16),
+                          child: LinearProgressIndicator(
+                            minHeight: 1,
+                          )
                         );
                       }
-                      return const Padding(
-                        padding: EdgeInsets.only(top: 16, right: 16, bottom: 16),
-                        child: LinearProgressIndicator(
-                          minHeight: 1,
-                        )
-                      );
-                    }
-                  )
-                ],
-              )
+                    )
+                  ],
+                )
+              ),
             ),
           ),
           Positioned(   
@@ -132,10 +137,10 @@ class _VehiclesViewState extends State<VehiclesView> {
               dataLoaded ? 
                 ElevatedButton (
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50), // Set minimum width and height
+                    minimumSize: const Size(double.infinity, 50),
                   ),
                   onPressed: () async {
-                    var item = await showItemForm(context, null, user);
+                    var item = await showVehicleForm(context, null, user);
                     if(item?.id == -1) {
                       await VehicleRepository().add(item!);  
                       setState(() {
@@ -155,7 +160,7 @@ class _VehiclesViewState extends State<VehiclesView> {
 
 }
 
-Future<Vehicle?> showItemForm (BuildContext context, Vehicle? item, Person user) {
+Future<Vehicle?> showVehicleForm (BuildContext context, Vehicle? item, Person user) {
   
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
@@ -163,7 +168,7 @@ Future<Vehicle?> showItemForm (BuildContext context, Vehicle? item, Person user)
   String? vehicleType;
 
   var isUpdate = item != null ? true: false;
-
+  var vehicleTypes = ["Bil", "MC", "Lastbil", "Ospecificerad"];
 
   return showDialog<Vehicle?>(
     context: context,
@@ -189,97 +194,79 @@ Future<Vehicle?> showItemForm (BuildContext context, Vehicle? item, Person user)
                   fontWeight: FontWeight.bold
                 )
               ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
             Form(
               key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Wrap(
+                runSpacing: 8,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 8),
-                    child: TextFormField(
-                      initialValue: item?.regId,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Registreringsnummer",
-                      ),
-                      validator: (String? value) {
-                        if(value == null || value.isEmpty) {
-                          return "Du måste fylla i ett registreringsnummer";
-                        }
-                        return null;
-                      },
-                      onSaved: (value) => regId = value,
+                  TextFormField(
+                    initialValue: item?.regId,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: "Registreringsnummer",
                     ),
+                    validator: (String? value) {
+                      if(value == null || value.isEmpty) {
+                        return "Du måste fylla i ett registreringsnummer";
+                      }
+                      return null;
+                    },
+                    onSaved: (value) => regId = value,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8, bottom: 8),
-                    child: TextFormField(
-                      initialValue: item?.vehicleType,
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: "Typ av fordon",
-                      ),
-                      validator: (String? value) {
-                        if(value == null || value.isEmpty) {
-                          return "Du måste välja vilken typ av fordon det är";
-                        }
-                        return null;
-                      },
-                      onSaved: (value) => vehicleType = value,
-                    ),
+                  DropdownMenu<String>(
+                    width: double.infinity,
+                    initialSelection: item?.vehicleType,
+                    hintText: "Välj typ av fordon",
+                    onSelected: (String? value) {
+                      vehicleType = value!;
+                    },
+                    dropdownMenuEntries: vehicleTypes.map<DropdownMenuEntry<String>>((String v) {
+                      return DropdownMenuEntry<String>(
+                        value: v,
+                        label: v,
+                      );
+                    }).toList(),    
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top:32),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left:8, right:8),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if(context.mounted) {
-                                Navigator.of(context).pop(null);
-                              }             
-                            },
-                            child: const Text("Avbryt"),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left:8, right:8),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if(context.mounted) {
-                                Navigator.of(context).pop(null);
-                              }             
-                            },
-                            child: const Text("Ta bort"),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left:8),
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              // Validate will return true if the form is valid, or false if
-                              // the form is invalid.
-                              if (formKey.currentState!.validate()) {
-                                formKey.currentState!.save();
-                                if(regId != null && vehicleType != null) {
-                                  item = Vehicle(id: item?.id, regId: regId!, vehicleType: vehicleType!, owner: user);
-                                }
-                                if(context.mounted) {
-                                  Navigator.of(context).pop(item);
-                                }             
-                                      
-                              } 
-                            },
-                            child: const Text("OK"),
-                          ),
-                        ),
-                      ]
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
                     ),
-                  )
+                    onPressed: () async {
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
+                        if(regId != null && vehicleType != null) {
+                          item = Vehicle(id: item?.id, regId: regId!, vehicleType: vehicleType!, owner: user);
+                        }
+                        if(context.mounted) {
+                          Navigator.of(context).pop(item);
+                        }                 
+                      } 
+                    },
+                    child: const Text("Spara"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    onPressed: () {
+                      if(context.mounted) {
+                        Navigator.of(context).pop(null);
+                      }             
+                    },
+                    child: const Text("Ta bort"),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    onPressed: () {
+                      if(context.mounted) {
+                        Navigator.of(context).pop(null);
+                      }             
+                    },
+                    child: const Text("Avbryt"),
+                  ),
                 ],
               )
             ),
@@ -293,23 +280,20 @@ Future<Vehicle?> showItemForm (BuildContext context, Vehicle? item, Person user)
 
 Future<String?> showRemovalDialog(BuildContext context, Vehicle item) {
 
-  // set up the button
   Widget okButton = TextButton(
     child: const Text("OK"),
     onPressed: () { 
-      Navigator.of(context).pop("confirm"); // dismiss dialog
+      Navigator.of(context).pop("confirm");
     },
   );
 
-  // set up the button
   Widget cancelButton = TextButton(
     child: const Text("Avbryt"),
     onPressed: () { 
-      Navigator.of(context).pop(); // dismiss dialog
+      Navigator.of(context).pop();
     },
   );
 
-    // set up the AlertDialog
   return showDialog<String>(
     context: context, 
     builder: (BuildContext builder) {

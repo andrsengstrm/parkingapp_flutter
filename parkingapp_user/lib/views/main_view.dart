@@ -139,211 +139,214 @@ class _MainViewState extends State<MainView> {
       return FutureBuilder(
         future: value,
         builder: (context, snapshot) {
-         return Center(
-            widthFactor: 300,
-            child: 
-            
-            loginModeCreate
-            
-            ? Form(
-                key: loginFormKey,
-                child: SizedBox(
-                  width: 300,
-                  child: Wrap(
-                    runSpacing: 16,
-                    children: [
-                      const Text(
-                        "Parkeringsappen",
-                        style: TextStyle(
-                          fontSize: 21,
-                          fontWeight: FontWeight.bold
-                        )
-                      ),
-                      const Text("Fyll i dina uppgifter för att skapa ett konto"),
-                      TextFormField(
-                        enabled: snapshot.connectionState != ConnectionState.waiting,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Email",
-                          hintText: "Email",
+         return Container(
+            color: Colors.white,
+            child: Center(
+              widthFactor: 300,
+              child: 
+              
+              loginModeCreate
+              
+              ? Form(
+                  key: loginFormKey,
+                  child: SizedBox(
+                    width: 300,
+                    child: Wrap(
+                      runSpacing: 16,
+                      children: [
+                        const Text(
+                          "Parkeringsappen",
+                          style: TextStyle(
+                            fontSize: 21,
+                            fontWeight: FontWeight.bold
+                          )
                         ),
-                        validator: (String? value) {
-                          if(value == null || value.isEmpty) {
-                            return "Du måste fylla i din email för att skapa ett konto";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => email = value,
-                      ),
-                      TextFormField(
-                        enabled: snapshot.connectionState != ConnectionState.waiting,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Namn",
-                          hintText: "Namn",
-                        ),
-                        validator: (String? value) {
-                          if(value == null || value.isEmpty) {
-                            return "Du måste fylla i ditt namn för att skapa ett konto";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => name = value,
-                      ),
-                       TextFormField(
-                        enabled: snapshot.connectionState != ConnectionState.waiting,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Personnummer",
-                          hintText: "Personummer",
-                        ),
-                        validator: (String? value) {
-                          if(value == null || value.isEmpty) {
-                            return "Du måste fylla i ditt personnummer för att skapa ett konto";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => personId = value,
-                      ),
-                      snapshot.connectionState == ConnectionState.waiting
-                      ? const Center(child: CircularProgressIndicator())
-                      : ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 50), // Set minimum width and height
+                        const Text("Fyll i dina uppgifter för att skapa ett konto"),
+                        TextFormField(
+                          enabled: snapshot.connectionState != ConnectionState.waiting,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Email",
+                            hintText: "Email",
                           ),
-                          onPressed: () async {
-                            if(loginFormKey.currentState!.validate()) {
-                              loginFormKey.currentState!.save();
-                              _loginFuture.value = Future.delayed(
-                                const Duration(seconds: 2)
-                              );
-                                  
-                              _loginFuture.value.whenComplete(() async {
-                                var user = await createUser();
-                                if(user != null) {
+                          validator: (String? value) {
+                            if(value == null || value.isEmpty) {
+                              return "Du måste fylla i din email för att skapa ett konto";
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => email = value,
+                        ),
+                        TextFormField(
+                          enabled: snapshot.connectionState != ConnectionState.waiting,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Namn",
+                            hintText: "Namn",
+                          ),
+                          validator: (String? value) {
+                            if(value == null || value.isEmpty) {
+                              return "Du måste fylla i ditt namn för att skapa ett konto";
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => name = value,
+                        ),
+                         TextFormField(
+                          enabled: snapshot.connectionState != ConnectionState.waiting,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Personnummer",
+                            hintText: "Personummer",
+                          ),
+                          validator: (String? value) {
+                            if(value == null || value.isEmpty) {
+                              return "Du måste fylla i ditt personnummer för att skapa ett konto";
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => personId = value,
+                        ),
+                        snapshot.connectionState == ConnectionState.waiting
+                        ? const Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 50), // Set minimum width and height
+                            ),
+                            onPressed: () async {
+                              if(loginFormKey.currentState!.validate()) {
+                                loginFormKey.currentState!.save();
+                                _loginFuture.value = Future.delayed(
+                                  const Duration(seconds: 2)
+                                );
+                                    
+                                _loginFuture.value.whenComplete(() async {
+                                  var user = await createUser();
+                                  if(user != null) {
+                                    var userIsLoggedIn = await loginUser();
+                                    if(userIsLoggedIn) {
+                                      setState(() {
+                                        isLoggedIn = true;
+                                      });
+                                      //if(context.mounted) {
+                                      //  Navigator.of(context).pop();
+                                      //}
+                                    }
+                                  }
+                                });
+                                
+                              } 
+                            },
+                            child: const Text("Skapa konto")
+                          ),
+                          const Text("Har de redan ett konto?"),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                loginModeCreate = false;
+                              });
+                            },
+                            child: const Text("Klicka här för att logga in"),
+                          ),
+                          loginError
+                          ? const Text("Inloggningen misslyckades!")
+                          : const SizedBox.shrink()
+                      ]
+                    ),
+                  ),
+                )
+           
+              : Form(
+                  key: loginFormKey,
+                  child: SizedBox(
+                    width: 300,
+                    child: Wrap(
+                      runSpacing: 16,
+                      children: [
+                        const Text(
+                          "Parkeringsappen",
+                          style: TextStyle(
+                            fontSize: 21,
+                            fontWeight: FontWeight.bold
+                          )
+                        ),
+                        const Text("Fyll i dina uppgifter för att logga in"),
+                        TextFormField(
+                          enabled: snapshot.connectionState != ConnectionState.waiting,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Email",
+                            hintText: "Email",
+                          ),
+                          validator: (String? value) {
+                            if(value == null || value.isEmpty) {
+                              return "Du måste fylla i din email för att logga in";
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => email = value,
+                        ),
+                        TextFormField(
+                          obscureText: true,
+                          enabled: snapshot.connectionState != ConnectionState.waiting,
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Password",
+                            hintText: "Password",
+                          ),
+                          validator: (String? value) {
+                            if(value == null || value.isEmpty) {
+                              return "Du måste fylla i ditt lösenord för att logga in";
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => pwd = value,
+                        ),
+                        snapshot.connectionState == ConnectionState.waiting
+                        ? const Center(child: CircularProgressIndicator())
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 50), // Set minimum width and height
+                            ),
+                            onPressed: () async {
+                              if(loginFormKey.currentState!.validate()) {
+                                loginFormKey.currentState!.save();
+                                _loginFuture.value = Future.delayed(
+                                  const Duration(seconds: 2)
+                                );
+                                    
+                                _loginFuture.value.whenComplete(() async {
                                   var userIsLoggedIn = await loginUser();
                                   if(userIsLoggedIn) {
                                     setState(() {
                                       isLoggedIn = true;
                                     });
-                                    //if(context.mounted) {
-                                    //  Navigator.of(context).pop();
-                                    //}
                                   }
-                                }
-                              });
-                              
-                            } 
-                          },
-                          child: const Text("Skapa konto")
-                        ),
-                        const Text("Har de redan ett konto?"),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              loginModeCreate = false;
-                            });
-                          },
-                          child: const Text("Klicka här för att logga in"),
-                        ),
-                        loginError
-                        ? const Text("Inloggningen misslyckades!")
-                        : const SizedBox.shrink()
-                    ]
-                  ),
-                ),
-              )
-
-            : Form(
-                key: loginFormKey,
-                child: SizedBox(
-                  width: 300,
-                  child: Wrap(
-                    runSpacing: 16,
-                    children: [
-                      const Text(
-                        "Parkeringsappen",
-                        style: TextStyle(
-                          fontSize: 21,
-                          fontWeight: FontWeight.bold
-                        )
-                      ),
-                      const Text("Fyll i dina uppgifter för att logga in"),
-                      TextFormField(
-                        enabled: snapshot.connectionState != ConnectionState.waiting,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Email",
-                          hintText: "Email",
-                        ),
-                        validator: (String? value) {
-                          if(value == null || value.isEmpty) {
-                            return "Du måste fylla i din email för att logga in";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => email = value,
-                      ),
-                      TextFormField(
-                        obscureText: true,
-                        enabled: snapshot.connectionState != ConnectionState.waiting,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: "Password",
-                          hintText: "Password",
-                        ),
-                        validator: (String? value) {
-                          if(value == null || value.isEmpty) {
-                            return "Du måste fylla i ditt lösenord för att logga in";
-                          }
-                          return null;
-                        },
-                        onSaved: (value) => pwd = value,
-                      ),
-                      snapshot.connectionState == ConnectionState.waiting
-                      ? const Center(child: CircularProgressIndicator())
-                      : ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 50), // Set minimum width and height
+                                });
+                                
+                              } 
+                            },
+                            child: const Text("Logga in")
                           ),
-                          onPressed: () async {
-                            if(loginFormKey.currentState!.validate()) {
-                              loginFormKey.currentState!.save();
-                              _loginFuture.value = Future.delayed(
-                                const Duration(seconds: 2)
-                              );
-                                  
-                              _loginFuture.value.whenComplete(() async {
-                                var userIsLoggedIn = await loginUser();
-                                if(userIsLoggedIn) {
-                                  setState(() {
-                                    isLoggedIn = true;
-                                  });
-                                }
+                          const Text("Har du inget konto?"),
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                loginModeCreate = true;
                               });
-                              
-                            } 
-                          },
-                          child: const Text("Logga in")
-                        ),
-                        const Text("Har du inget konto?"),
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              loginModeCreate = true;
-                            });
-                          },
-                          child: const Text("Klicka här för att skapa ett konto"),
-                        ),
-                        loginError
-                        ? const Text("Inloggningen misslyckades!")
-                        : const SizedBox.shrink()
-                    ]
+                            },
+                            child: const Text("Klicka här för att skapa ett konto"),
+                          ),
+                          loginError
+                          ? const Text("Inloggningen misslyckades!")
+                          : const SizedBox.shrink()
+                      ]
+                    ),
                   ),
-                ),
-              )
-
-          );
+                )
+           
+            ),
+         );
         }
       );
       }

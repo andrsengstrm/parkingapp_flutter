@@ -28,9 +28,7 @@ class _LoginViewState extends State<LoginView> {
     bool isLoggedIn = false;
     loginError = false;
     try {
-      debugPrint("Email: $email");
       var person = await PersonRepository().getByEmail(email!);
-      debugPrint(person!.email);
       if(person != null) {
         isLoggedIn = true;
       }
@@ -65,9 +63,7 @@ class _LoginViewState extends State<LoginView> {
          return Center(
             widthFactor: 300,
             child: 
-            
             loginModeCreate
-            
             ? Form(
                 key: _formKey,
                 child: SizedBox(
@@ -132,7 +128,7 @@ class _LoginViewState extends State<LoginView> {
                       ? const Center(child: CircularProgressIndicator())
                       : ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 50), // Set minimum width and height
+                            minimumSize: const Size(double.infinity, 50),
                           ),
                           onPressed: () async {
                             if(_formKey.currentState!.validate()) {
@@ -222,7 +218,7 @@ class _LoginViewState extends State<LoginView> {
                       ? const Center(child: CircularProgressIndicator())
                       : ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(double.infinity, 50), // Set minimum width and height
+                            minimumSize: const Size(double.infinity, 50),
                           ),
                           onPressed: () async {
                             if(_formKey.currentState!.validate()) {
