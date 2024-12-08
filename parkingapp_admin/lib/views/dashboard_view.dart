@@ -89,117 +89,120 @@ class _DashboardViewState extends State<DashboardView> {
   
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topLeft,
-      padding: const EdgeInsets.all(16),
-      color: Colors.white,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Dashboard", style: TextStyle(fontSize: 21,fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 16, bottom: 16),
-                child: Container(
-                  width: 300,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey)
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text("Antal aktiva parkeringar"),
-                      Text(activeParkingsCount.toString(), style: TextStyle(fontSize: 42))
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16, bottom: 16),
-                child: Container(
-                  width: 300,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey)
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text("Totalt antal parkeringar"),
-                      Text(allParkingsCount.toString(), style: TextStyle(fontSize: 42))
-                    ],
-                  ),
-                ),
-              )
-            ]
-          ),
-          Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 16, bottom: 16),
-                child: Container(
-                  width: 300,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey)
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text("Antal lediga parkeringsplatser"),
-                      Text(availableParkingSpacesCount.toString(), style: TextStyle(fontSize: 42))
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 16, bottom: 16),
-                child: Container(
-                  width: 300,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey)
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const Text("Totalt antal parkeringsplatser"),
-                      Text(allParkingSpacesCount.toString(), style: TextStyle(fontSize: 42))
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Container(
-            width: 616,
-            height: 200,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey)
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Container(
+        alignment: Alignment.topLeft,
+        padding: const EdgeInsets.all(16),
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Dashboard", style: TextStyle(fontSize: 21,fontWeight: FontWeight.bold)),
+            const SizedBox(height: 16),
+            Row(
               children: [
-                const Text("Total intäkt"),
-                Text("${totalParkingsCost.toStringAsFixed(2)} kr" , style: TextStyle(fontSize: 42))
+                Padding(
+                  padding: const EdgeInsets.only(right: 16, bottom: 16),
+                  child: Container(
+                    width: 300,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey)
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text("Antal aktiva parkeringar"),
+                        Text(activeParkingsCount.toString(), style: TextStyle(fontSize: 42))
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 16, bottom: 16),
+                  child: Container(
+                    width: 300,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey)
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text("Totalt antal parkeringar"),
+                        Text(allParkingsCount.toString(), style: TextStyle(fontSize: 42))
+                      ],
+                    ),
+                  ),
+                )
+              ]
+            ),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 16, bottom: 16),
+                  child: Container(
+                    width: 300,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey)
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text("Antal lediga parkeringsplatser"),
+                        Text(availableParkingSpacesCount.toString(), style: TextStyle(fontSize: 42))
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 16, bottom: 16),
+                  child: Container(
+                    width: 300,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey)
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text("Totalt antal parkeringsplatser"),
+                        Text(allParkingSpacesCount.toString(), style: TextStyle(fontSize: 42))
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
-          )
-        ],
-      )
+            Container(
+              width: 616,
+              height: 200,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey)
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Text("Total intäkt"),
+                  Text("${totalParkingsCost.toStringAsFixed(2)} kr" , style: TextStyle(fontSize: 42))
+                ],
+              ),
+            )
+          ],
+        )
+      ),
     );
   }
 }

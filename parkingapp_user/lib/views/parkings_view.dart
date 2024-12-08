@@ -109,8 +109,6 @@ class _ParkingsViewState extends State<ParkingsView> {
               scrollDirection: Axis.vertical,
               child: Container(
                 alignment: Alignment.topLeft,
-                width: 800,
-                height: 800,
                 padding: const EdgeInsets.all(16),
                 color: Colors.white,
                 child: Column(

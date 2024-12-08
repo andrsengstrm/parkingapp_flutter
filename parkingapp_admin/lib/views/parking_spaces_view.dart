@@ -53,95 +53,96 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
               selectedItem = null;
             });
           },
-          child: Container(
-            alignment: Alignment.topLeft,
-            width: 800,
-            height: 800,
-            padding: const EdgeInsets.all(16),
-            color: Colors.white,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Parkeringsplatser", style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 16),
-                FutureBuilder<List<ParkingSpace>?>(
-                  future: itemList,
-                  builder: (context, snapshot) {
-                    if(snapshot.hasData) {
-                      var items = snapshot.data!;
-                      return Column(
-                        children: [
-                          const Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 200, 
-                                child: Text("Parkeringsplats", style: TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(
-                                width: 200, 
-                                child: Text("Kostnad/timme", style: TextStyle(fontWeight: FontWeight.bold)),
-                              )
-                            ]
-                          ),
-                          const SizedBox(height: 8),
-                          ListView.separated(
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: items.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  setState((){
-                                    selectedItem = items[index];
-                                  });
-                                  //String? regId = selectedParking!.vehicle!.regId;
-                                  //var snackBar = SnackBar(content: Text("Parkeringen för $regId är vald"));
-                                  //ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                                },
-                                child: MouseRegion(
-                                  cursor: SystemMouseCursors.click,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    color: selectedItem == items[index] ? Colors.blueGrey[50] : Colors.white,
-                                    child: Row (
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        SizedBox(
-                                          width: 200,
-                                          child: Text(items[index].address),
-                                        ),
-                                        SizedBox(
-                                          width: 200,
-                                          child: Text(items[index].pricePerHour.toString()),
-                                        )
-                                      ],
-                                    ),
-                                  ),
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Container(
+              alignment: Alignment.topLeft,
+              padding: const EdgeInsets.all(16),
+              color: Colors.white,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Parkeringsplatser", style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  FutureBuilder<List<ParkingSpace>?>(
+                    future: itemList,
+                    builder: (context, snapshot) {
+                      if(snapshot.hasData) {
+                        var items = snapshot.data!;
+                        return Column(
+                          children: [
+                            const Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 200, 
+                                  child: Text("Parkeringsplats", style: TextStyle(fontWeight: FontWeight.bold)),
+                                ),
+                                SizedBox(
+                                  width: 200, 
+                                  child: Text("Kostnad/timme", style: TextStyle(fontWeight: FontWeight.bold)),
                                 )
-                              );
-                            },
-                            separatorBuilder: (BuildContext context, int index) => const Divider(),
-                          )
-                          
-                        ]
-                      );
-                    } else if(snapshot.hasError) {
+                              ]
+                            ),
+                            const SizedBox(height: 8),
+                            ListView.separated(
+                              scrollDirection: Axis.vertical,
+                              shrinkWrap: true,
+                              itemCount: items.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    setState((){
+                                      selectedItem = items[index];
+                                    });
+                                    //String? regId = selectedParking!.vehicle!.regId;
+                                    //var snackBar = SnackBar(content: Text("Parkeringen för $regId är vald"));
+                                    //ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                  },
+                                  child: MouseRegion(
+                                    cursor: SystemMouseCursors.click,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(4),
+                                      color: selectedItem == items[index] ? Colors.blueGrey[50] : Colors.white,
+                                      child: Row (
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(
+                                            width: 200,
+                                            child: Text(items[index].address),
+                                          ),
+                                          SizedBox(
+                                            width: 200,
+                                            child: Text(items[index].pricePerHour.toString()),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                );
+                              },
+                              separatorBuilder: (BuildContext context, int index) => const Divider(),
+                            )
+                            
+                          ]
+                        );
+                      } else if(snapshot.hasError) {
+                        return const Padding(
+                          padding: EdgeInsets.only(top: 8, bottom: 8),
+                          child: Text("Det gick inte att hämta data!"),
+                        );
+                      }
                       return const Padding(
-                        padding: EdgeInsets.only(top: 8, bottom: 8),
-                        child: Text("Det gick inte att hämta data!"),
+                        padding: EdgeInsets.only(top: 16, right: 16, bottom: 16),
+                        child: LinearProgressIndicator(
+                          minHeight: 1,
+                        )
                       );
                     }
-                    return const Padding(
-                      padding: EdgeInsets.only(top: 16, right: 16, bottom: 16),
-                      child: LinearProgressIndicator(
-                        minHeight: 1,
-                      )
-                    );
-                  }
-                )
-              ],
-            )
+                  )
+                ],
+              )
+            ),
           ),
         ),
         Positioned(

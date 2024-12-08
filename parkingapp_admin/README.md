@@ -1,16 +1,19 @@
-# parkingapp_admin
+# Parkingapp_admin
 
-A new Flutter project.
+Windowsapp för att hantera parkeringar. 
 
-## Getting Started
+## Beskrivning
+En windows-app för att hantera parkeringar och parkeringsplatser i systemet
 
-This project is a starting point for a Flutter application.
+Applikation har en view, main_view.dart, som innehåller NavigationRail och en Expanded-widget.
+När man navigerar mellan views i appen så ändrar jag view i Expanded-widgeten baserat på index i NavigationRail.
 
-A few resources to get you started if this is your first Flutter project:
+### Views
+Dashboard_view är en enkel dashboard där man kan se aktiva och avslutade parkeringar, lediga och totalt antal parkeringsplatser samt en ihopräknad summa intjänade pengar från alla aktiva och avslutade parkeringar.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Parkings_view innehållar alla aktiva och avslutade parkeringar. 
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Parking_spaces_view innehåller alla parkeringsplatser i systemet. Här man man lägga till, redigera och ta bort parkeringsplatser.
+
+### Repos
+Samma repos används som från tidigare inlämningar.
