@@ -62,7 +62,8 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text("Parkeringsplatser", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Parkeringsplatser", style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
                 FutureBuilder<List<ParkingSpace>?>(
                   future: itemList,
                   builder: (context, snapshot) {
@@ -74,12 +75,8 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                width: 100,
-                                child: Text("Id", style: TextStyle(fontWeight: FontWeight.bold)),
-                              ),
-                              SizedBox(
                                 width: 200, 
-                                child: Text("Adress", style: TextStyle(fontWeight: FontWeight.bold)),
+                                child: Text("Parkeringsplats", style: TextStyle(fontWeight: FontWeight.bold)),
                               ),
                               SizedBox(
                                 width: 200, 
@@ -87,7 +84,8 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
                               )
                             ]
                           ),
-                          ListView.builder(
+                          const SizedBox(height: 8),
+                          ListView.separated(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemCount: items.length,
@@ -104,15 +102,11 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
                                 child: MouseRegion(
                                   cursor: SystemMouseCursors.click,
                                   child: Container(
-                                    padding: const EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(4),
                                     color: selectedItem == items[index] ? Colors.blueGrey[50] : Colors.white,
                                     child: Row (
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        SizedBox(
-                                          width: 100,
-                                          child:  Text(items[index].id.toString()),
-                                        ),
                                         SizedBox(
                                           width: 200,
                                           child: Text(items[index].address),
@@ -127,6 +121,7 @@ class _ParkingSpacesViewState extends State<ParkingSpacesView> {
                                 )
                               );
                             },
+                            separatorBuilder: (BuildContext context, int index) => const Divider(),
                           )
                           
                         ]

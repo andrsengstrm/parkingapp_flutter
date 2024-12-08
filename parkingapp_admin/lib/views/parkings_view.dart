@@ -13,11 +13,19 @@ class ParkingsView extends StatefulWidget {
 
 class _ParkingsViewState extends State<ParkingsView> {
 
-  late Future<List<Parking>?> parkingsList;
+  late Future<List<Parking>?> activeParkingsList;
+  late Future<List<Parking>?> finishedParkingsList;
 
-  Future<List<Parking>> getParkingsList() async {
+  Future<List<Parking>> getActiveParkingsList() async {
     var parkingsList = await ParkingRepository().getAll();
-    return parkingsList!;
+    parkingsList = parkingsList!.where((p) => p.endTime == null).toList();
+    return parkingsList;
+  }
+
+  Future<List<Parking>> getFinishedParkingsList() async {
+    var parkingsList = await ParkingRepository().getAll();
+    parkingsList = parkingsList!.where((p) => p.endTime != null).toList();
+    return parkingsList;
   }
 
   Parking? selectedItem;
@@ -25,7 +33,8 @@ class _ParkingsViewState extends State<ParkingsView> {
   @override
   void initState() {
     super.initState();
-    parkingsList = getParkingsList();
+    activeParkingsList = getActiveParkingsList();
+    finishedParkingsList = getFinishedParkingsList();
   }
 
   @override
@@ -41,26 +50,26 @@ class _ParkingsViewState extends State<ParkingsView> {
           },
           child: Container(
             alignment: Alignment.topLeft,
-            width: 800,
-            height: 800,
             padding: const EdgeInsets.all(16),
             color: Colors.white,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [ 
-                const Text("Aktiva parkeringar", style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text("Aktiva parkeringar", style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
                 FutureBuilder<List<Parking>?>(
-                  future: parkingsList,
+                  future: activeParkingsList,
                   builder: (context, snapshot) {
                     if(snapshot.hasData) {
+                      var items = snapshot.data;
                       return Column(
                         children: [
                           const Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                width: 100,
-                                child: Text("Id", style: TextStyle(fontWeight: FontWeight.bold)),
+                                width: 200, 
+                                child: Text("Parkeringsplats", style: TextStyle(fontWeight: FontWeight.bold)),
                               ),
                               SizedBox(
                                 width: 200, 
@@ -68,23 +77,24 @@ class _ParkingsViewState extends State<ParkingsView> {
                               ),
                               SizedBox(
                                 width: 200, 
-                                child: Text("Adress", style: TextStyle(fontWeight: FontWeight.bold)),
+                                child: Text("Starttid", style: TextStyle(fontWeight: FontWeight.bold)),
                               ),
                               SizedBox(
                                 width: 200, 
-                                child: Text("Starttid", style: TextStyle(fontWeight: FontWeight.bold)),
+                                child: Text("Nuvarande kostnad", style: TextStyle(fontWeight: FontWeight.bold)),
                               )
                             ]
                           ),
+                          const SizedBox(height: 8),
                           ListView.separated(
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
-                            itemCount: snapshot.data!.length,
+                            itemCount: items!.length,
                             itemBuilder: (BuildContext context, int index) {
                               return GestureDetector(
                                 onTap: () {
                                   setState((){
-                                    selectedItem = snapshot.data![index];
+                                    selectedItem = items[index];
                                   });
                                   //String? regId = selectedParking!.vehicle!.regId;
                                   //var snackBar = SnackBar(content: Text("Parkeringen för $regId är vald"));
@@ -94,25 +104,128 @@ class _ParkingsViewState extends State<ParkingsView> {
                                   cursor: SystemMouseCursors.click,
                                   child: Container(
                                     padding: const EdgeInsets.all(4),
-                                    color: selectedItem == snapshot.data![index] ? Colors.blueGrey[50] : Colors.white,
+                                    color: selectedItem == items[index] ? Colors.blueGrey[50] : Colors.white,
                                     child: Row (
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         SizedBox(
-                                          width: 100,
-                                          child:  Text(snapshot.data![index].id.toString()),
+                                          width: 200,
+                                          child: Text(items[index].parkingSpace!.address),
                                         ),
                                         SizedBox(
                                           width: 200,
-                                          child: Text(snapshot.data![index].vehicle!.regId),
+                                          child: Text(items[index].vehicle!.regId),
                                         ),
                                         SizedBox(
                                           width: 200,
-                                          child: Text(snapshot.data![index].parkingSpace!.address),
+                                          child: Text(items[index].startTime),
                                         ),
                                         SizedBox(
                                           width: 200,
-                                          child: Text(snapshot.data![index].startTime),
+                                          child: Text("${items[index].getCostForParking()} kr"),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              );
+                            },
+                            separatorBuilder: (BuildContext context, int index) => const Divider(),
+                          )
+                          
+                        ]
+                      );
+                    } else if(snapshot.hasError) {
+                      return const Padding(
+                        padding: EdgeInsets.only(top: 8, bottom: 8),
+                        child: Text("Det gick inte att hämta data!"),
+                      );
+                    }
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 16, right: 16, bottom: 16),
+                      child: LinearProgressIndicator(
+                        minHeight: 1,
+                      )
+                    );
+                  }
+                ),
+                const SizedBox(height: 64),
+                const Text("Avslutade parkeringar", style: TextStyle(fontSize: 21,fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                FutureBuilder<List<Parking>?>(
+                  future: finishedParkingsList,
+                  builder: (context, snapshot) {
+                    if(snapshot.hasData) {
+                      var items = snapshot.data;
+                      return Column(
+                        children: [
+                          const Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 200, 
+                                child: Text("Parkeringsplats", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 200, 
+                                child: Text("Registreringsnummer", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 200, 
+                                child: Text("Starttid", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 200, 
+                                child: Text("Sluttid", style: TextStyle(fontWeight: FontWeight.bold)),
+                              ),
+                              SizedBox(
+                                width: 200, 
+                                child: Text("Slutlig kostnad", style: TextStyle(fontWeight: FontWeight.bold)),
+                              )
+                            ]
+                          ),
+                          const SizedBox(height: 8,),
+                          ListView.separated(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: items!.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  setState((){
+                                    selectedItem = items[index];
+                                  });
+                                  //String? regId = selectedParking!.vehicle!.regId;
+                                  //var snackBar = SnackBar(content: Text("Parkeringen för $regId är vald"));
+                                  //ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                },
+                                child: MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    color: selectedItem == items![index] ? Colors.blueGrey[50] : Colors.white,
+                                    child: Row (
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 200,
+                                          child: Text(items[index].parkingSpace!.address),
+                                        ),
+                                        SizedBox(
+                                          width: 200,
+                                          child: Text(items[index].vehicle!.regId),
+                                        ),
+                                        SizedBox(
+                                          width: 200,
+                                          child: Text(items[index].startTime),
+                                        ),
+                                        SizedBox(
+                                          width: 200,
+                                          child: Text(items[index].endTime!),
+                                        ),
+                                        SizedBox(
+                                          width: 200,
+                                          child: Text("${items[index].getCostForParking()} kr"),
                                         )
                                       ],
                                     ),
